@@ -22,10 +22,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height * 0.90;
-    final List<BloodWorkParameter> filteredParameters =
-        parameters.where((parameter) {
-      return selectedCategories.isEmpty ||
-          selectedCategories.contains(parameter.category);
+    final List<BloodWorkParameter> filteredParameters = parameters.where((parameter) {
+      return selectedCategories.isEmpty || selectedCategories.contains(parameter.category);
     }).toList();
 
     return Container(
@@ -117,9 +115,6 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                             selected: selectedCategories.contains(category),
                             onSelected: (isSelected) {
                               setState(() {
-                                debugPrint(isSelected.toString());
-                                debugPrint(selectedCategories.toString());
-
                                 if (isSelected) {
                                   selectedCategories.add(category);
                                 } else {
@@ -136,6 +131,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             ListView.builder(
               shrinkWrap: true,
               itemCount: filteredParameters.length,
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(filteredParameters[index].name),
