@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:graphic/graphic.dart';
 import 'package:flutter/gestures.dart';
 import 'package:gymtrak/data.dart';
-import 'package:gymtrak/utilities/charts.dart';
+import 'package:gymtrak/utilities/charts/charts.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class UserDashboardPage extends StatelessWidget {
   const UserDashboardPage({super.key});
@@ -30,8 +31,11 @@ class UserDashboardPage extends StatelessWidget {
                   minimumSize: const Size(100, 45),
                   splashFactory: NoSplash.splashFactory),
               onPressed: () {},
-              icon: const Icon(Icons.add),
-              label: const Text('Add new chart'),
+              icon: const Icon(
+                Symbols.add,
+                color: Colors.white,
+              ),
+              label: const Text('New chart'),
             ),
           )
         ],
@@ -41,27 +45,31 @@ class UserDashboardPage extends StatelessWidget {
         itemBuilder: (context, index) {
           if (index == 0) {
             return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 16.0),
                 child: CardWidget(
                   chartConfig: ChartConfiguration(
                     data: complexGroupData,
                     variables: {
                       'date': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map =
+                              data as Map<dynamic, dynamic>;
                           return map['date']?.toString() ?? '';
                         },
                         scale: OrdinalScale(tickCount: 0, inflate: true),
                       ),
                       'points': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map =
+                              data as Map<dynamic, dynamic>;
                           return map['points'] as num;
                         },
                       ),
                       'name': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map =
+                              data as Map<dynamic, dynamic>;
                           return map['name']?.toString() ?? '';
                         },
                       ),
@@ -69,15 +77,20 @@ class UserDashboardPage extends StatelessWidget {
                     coord: RectCoord(horizontalRange: [0.01, 0.99]),
                     marks: [
                       LineMark(
-                        position: Varset('date') * Varset('points') / Varset('name'),
+                        position:
+                            Varset('date') * Varset('points') / Varset('name'),
                         shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                         size: SizeEncode(value: 0.5),
                         color: ColorEncode(
                           variable: 'name',
                           values: Defaults.colors10,
                           updaters: {
-                            'groupMouse': {false: (color) => color.withAlpha(100)},
-                            'groupTouch': {false: (color) => color.withAlpha(100)},
+                            'groupMouse': {
+                              false: (color) => color.withAlpha(100)
+                            },
+                            'groupTouch': {
+                              false: (color) => color.withAlpha(100)
+                            },
                           },
                         ),
                       ),
@@ -86,8 +99,12 @@ class UserDashboardPage extends StatelessWidget {
                           variable: 'name',
                           values: Defaults.colors10,
                           updaters: {
-                            'groupMouse': {false: (color) => color.withAlpha(100)},
-                            'groupTouch': {false: (color) => color.withAlpha(100)},
+                            'groupMouse': {
+                              false: (color) => color.withAlpha(100)
+                            },
+                            'groupTouch': {
+                              false: (color) => color.withAlpha(100)
+                            },
                           },
                         ),
                       ),
@@ -108,11 +125,19 @@ class UserDashboardPage extends StatelessWidget {
                           },
                           variable: 'name',
                           devices: {PointerDeviceKind.mouse}),
-                      'tooltipTouch': PointSelection(
-                          on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
-                          devices: {PointerDeviceKind.touch}),
+                      'tooltipTouch': PointSelection(on: {
+                        GestureType.scaleUpdate,
+                        GestureType.tapDown,
+                        GestureType.longPressMoveUpdate
+                      }, devices: {
+                        PointerDeviceKind.touch
+                      }),
                       'groupTouch': PointSelection(
-                          on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
+                          on: {
+                            GestureType.scaleUpdate,
+                            GestureType.tapDown,
+                            GestureType.longPressMoveUpdate
+                          },
                           variable: 'name',
                           devices: {PointerDeviceKind.touch}),
                     },
@@ -139,26 +164,30 @@ class UserDashboardPage extends StatelessWidget {
                 ));
           } else if (index == 1) {
             return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 16.0),
                 child: CardWidget(
                   chartConfig: ChartConfiguration(
                     data: adjustData,
                     variables: {
                       'index': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map =
+                              data as Map<dynamic, dynamic>;
                           return map['index'].toString();
                         },
                       ),
                       'type': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map =
+                              data as Map<dynamic, dynamic>;
                           return map['type'] as String;
                         },
                       ),
                       'value': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map =
+                              data as Map<dynamic, dynamic>;
                           return map['value'] as num;
                         },
                       ),
@@ -166,9 +195,11 @@ class UserDashboardPage extends StatelessWidget {
                     coord: PolarCoord(),
                     marks: [
                       LineMark(
-                        position: Varset('index') * Varset('value') / Varset('type'),
+                        position:
+                            Varset('index') * Varset('value') / Varset('type'),
                         shape: ShapeEncode(value: BasicLineShape(loop: true)),
-                        color: ColorEncode(variable: 'type', values: Defaults.colors10),
+                        color: ColorEncode(
+                            variable: 'type', values: Defaults.colors10),
                       )
                     ],
                     axes: [
@@ -177,7 +208,11 @@ class UserDashboardPage extends StatelessWidget {
                     ],
                     selections: {
                       'touchMove': PointSelection(
-                        on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
+                        on: {
+                          GestureType.scaleUpdate,
+                          GestureType.tapDown,
+                          GestureType.longPressMoveUpdate
+                        },
                         dim: Dim.x,
                         variable: 'index',
                       )
@@ -222,7 +257,8 @@ class CardWidget extends StatelessWidget {
                 title: Text('Card Title'),
                 subtitle: Text('Subtitle'),
               ),
-              LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+              LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
                 return SizedBox(
                   height: 150,
                   child: Container(

@@ -1,8 +1,4 @@
-import 'dart:async';
-import 'package:gymtrak/utilities/components.dart';
-import 'package:path/path.dart';
 import 'package:gymtrak/home.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,9 +10,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      theme: ThemeData(primaryColor: Colors.black),
+      home: const HomePage(),
     );
   }
 }

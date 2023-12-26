@@ -6,6 +6,7 @@ import 'package:gymtrak/pages/dashboard.dart';
 import 'package:gymtrak/pages/medication.dart';
 import 'package:gymtrak/pages/metrics.dart';
 import 'package:gymtrak/pages/settings.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -35,18 +36,18 @@ class _HomePageState extends State<HomePage> {
   Widget get _overlayContent => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _createOverlayButton('assets/icons/health_metrics.png', 'Blood Work', () {
+          _createOverlayButton(const Icon(Symbols.health_metrics, color: Colors.white,), 'Blood Work', () {
             _switchPage(true, false);
           }),
           const SizedBox(height: 10),
-          _createOverlayButton('assets/icons/syringe.png', 'Medication', () {
+          _createOverlayButton(const Icon(Symbols.syringe, color: Colors.white,), 'Medication', () {
             _switchPage(false, true);
           }),
           const SizedBox(height: 15),
         ],
       );
 
-  ElevatedButton _createOverlayButton(String iconPath, String label, VoidCallback onPressed) {
+  ElevatedButton _createOverlayButton(Icon icon, String label, VoidCallback onPressed) {
     return ElevatedButton.icon(
       style: ElevatedButton.styleFrom(
           textStyle: const TextStyle(fontSize: 15, color: Colors.white),
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
           minimumSize: const Size(75, 45),
           splashFactory: NoSplash.splashFactory),
       onPressed: onPressed,
-      icon: Image.asset(iconPath),
+      icon: icon,
       label: Text(label),
     );
   }
@@ -96,21 +97,35 @@ class _HomePageState extends State<HomePage> {
             ? (_isMedicationPageOpen ? _medicationPage : _bloodWorkPage)
             : _pages[_selectedIndex]);
 
-    return Scaffold(body: displayBody, bottomNavigationBar: _buildBottomNavigationBar());
+    return Scaffold(
+      body: displayBody, 
+      resizeToAvoidBottomInset:false,
+      bottomNavigationBar: _buildBottomNavigationBar(), );
   }
 
   Widget _buildBottomNavigationBar() {
     return SafeArea(
       child: SizedBox(
-        height: 80,
+        height: 60,
         child: Theme(
           data: ThemeData(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
           ),
-          child: BottomNavigationBar(
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  blurRadius: 0.1,
+                  offset: const Offset(0.0, -0.5),
+                ),
+              ]
+            ),
+            child: BottomNavigationBar(
             currentIndex: _selectedIndex,
             onTap: _navigateBottomBar,
+            elevation: 0,
             type: BottomNavigationBarType.fixed,
             selectedLabelStyle: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
             unselectedLabelStyle: const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.normal),
@@ -118,26 +133,27 @@ class _HomePageState extends State<HomePage> {
             selectedItemColor: Colors.black,
             unselectedItemColor: Colors.black54,
             showUnselectedLabels: true,
-            items: [
+            items: const [
               BottomNavigationBarItem(
-                  icon: Image.asset('assets/icons/grid_view.png'),
-                  activeIcon: Image.asset('assets/icons/grid_view-active.png'),
-                  label: 'Dashboard'),
+                icon: Icon(Symbols.dashboard, color: Colors.black,),
+                activeIcon: Icon(Symbols.dashboard, fill: 1, color: Colors.black,),
+                label: 'Charts'),
               BottomNavigationBarItem(
-                  icon: Image.asset('assets/icons/straighten.png'),
-                  activeIcon: Image.asset('assets/icons/straighten-active.png'),
+                  icon: Icon(Symbols.straighten, color: Colors.black),
+                  activeIcon: Icon(Symbols.straighten, fill: 1, color: Colors.black),
                   label: 'Metrics'),
-              BottomNavigationBarItem(icon: Image.asset('assets/icons/add.png'), label: "Add"),
+              BottomNavigationBarItem(icon: Icon(Symbols.add, color: Colors.black,), label: "Add"),
               BottomNavigationBarItem(
-                  icon: Image.asset('assets/icons/calendar_today.png'),
-                  activeIcon: Image.asset('assets/icons/calendar_today-active.png'),
+                  icon: Icon(Symbols.calendar_today, color: Colors.black),
+                  activeIcon: Icon(Symbols.calendar_today, fill: 1, color: Colors.black,),
                   label: 'Calendar'),
               BottomNavigationBarItem(
-                  icon: Image.asset('assets/icons/settings.png'),
-                  activeIcon: Image.asset('assets/icons/settings-active.png'),
+                  icon: Icon(Symbols.settings, color: Colors.black,),
+                  activeIcon: Icon(Symbols.settings, fill: 1, color: Colors.black,),
                   label: 'Settings')
             ],
           ),
+          )
         ),
       ),
     );
