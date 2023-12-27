@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_botom_sheet.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_result.dart';
+import 'package:gymtrak/utilities/databases/bloodwork_database.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:path_provider/path_provider.dart';
 
 class UserBloodWorkPage extends StatefulWidget {
   const UserBloodWorkPage({super.key});
@@ -15,6 +17,12 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
   List<String> folders = ['Default Folder'];
   List<BloodWorkResult> results = [];
   final TextEditingController _folderNameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +56,7 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
                       minimumSize: const Size(75, 45),
                       splashFactory: NoSplash.splashFactory),
                   onPressed: () {
-                    _showAddTestResultSheet(context);
+                    _showAddTestResultSheet(context, null);
                   },
                   icon: const Icon(
                     Symbols.add,
@@ -74,8 +82,9 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
                         data: ThemeData(splashFactory: NoSplash.splashFactory),
                         child: IconButton(
                           icon: const Icon(Icons.create_new_folder, color: Colors.black87),
-                          onPressed: () {
+                          onPressed: () async {
                             _addNewFolder();
+                            debugPrint(((await getApplicationDocumentsDirectory()).toString()));
                           },
                         ),
                       ),
@@ -93,6 +102,13 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
   void dispose() {
     _folderNameController.dispose(); // Dispose the controller when the widget is disposed
     super.dispose();
+  }
+
+  void loadData() async {
+    List<BloodWorkResult> data = await BloodWorkDatabaseHelper.instance.getAllBloodWorkResults();
+    setState(() {
+      results = data;
+    });
   }
 
   void _addNewFolder() {
@@ -146,21 +162,30 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
     );
   }
 
-  void _showAddTestResultSheet(BuildContext context) {
+  void _showAddTestResultSheet(BuildContext context, BloodWorkResult? existingResult) {
     showModalBottomSheet<BloodWorkResult>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
         return BottomSheetWidget(
           folders: folders,
+          existingResult: existingResult,
         );
       },
-    ).then((BloodWorkResult? result) {
+    ).then((BloodWorkResult? result) async {
       if (result != null) {
         debugPrint('Received BloodWorkResult: ${result.toString()}');
-        setState(() {
-          results.add(result);
-        });
+        if (result.id == null) {
+          result.id = await BloodWorkDatabaseHelper.instance.insertBloodWorkResult(result);
+        } else {
+          await BloodWorkDatabaseHelper.instance.updateBloodWorkResult(result);
+        }
+
+        if (result.id != null) {
+          setState(() {
+            results.add(result);
+          });
+        }
       }
     });
   }
@@ -196,7 +221,9 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
                 trailing: IconButton(
                   icon: const Icon(Symbols.arrow_right),
                   color: Colors.black,
-                  onPressed: () {},
+                  onPressed: () {
+                    _showAddTestResultSheet(context, result);
+                  },
                 ),
               );
             },

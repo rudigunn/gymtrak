@@ -8,7 +8,9 @@ import 'package:material_symbols_icons/symbols.dart';
 
 class BottomSheetWidget extends StatefulWidget {
   final List<String> folders;
-  const BottomSheetWidget({super.key, required this.folders});
+  final BloodWorkResult? existingResult;
+
+  const BottomSheetWidget({super.key, required this.folders, this.existingResult});
 
   @override
   State<StatefulWidget> createState() => _BottomSheetWidgetState();
@@ -21,6 +23,24 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   late DateTime testDate;
   String? testDateString;
   Map<String, double> parameterValues = {};
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.existingResult != null) {
+      testName = widget.existingResult!.name;
+      selectedFolder = widget.existingResult!.folder;
+      testDate = widget.existingResult!.date;
+      parameterValues = widget.existingResult!.parameterValues;
+      var format = DateFormat('dd/MM/yyyy HH:mm');
+      testDateString = format.format(testDate);
+    } else {
+      testName = '';
+      testDate = DateTime.now();
+      parameterValues = {};
+      testDateString = null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,18 +186,31 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                   minimumSize: const Size(75, 45),
                   splashFactory: NoSplash.splashFactory),
               onPressed: () {
-                BloodWorkResult newTestResult = BloodWorkResult(
-                  name: testName,
-                  folder: selectedFolder,
-                  date: testDate,
-                  parameterValues: parameterValues,
-                );
+                if (widget.existingResult != null) {
+                  widget.existingResult!.name = testName;
+                  widget.existingResult!.folder = selectedFolder;
+                  widget.existingResult!.date = testDate;
+                  widget.existingResult!.parameterValues = parameterValues;
 
-                selectedFolder = 'Select a folder';
-                testName = '';
+                  selectedFolder = 'Select a folder';
+                  testName = '';
 
-                debugPrint(newTestResult.toString());
-                Navigator.pop(context, newTestResult);
+                  debugPrint(widget.existingResult.toString());
+                  Navigator.pop(context, widget.existingResult);
+                } else {
+                  BloodWorkResult newTestResult = BloodWorkResult(
+                    name: testName,
+                    folder: selectedFolder,
+                    date: testDate,
+                    parameterValues: parameterValues,
+                  );
+
+                  selectedFolder = 'Select a folder';
+                  testName = '';
+
+                  debugPrint(newTestResult.toString());
+                  Navigator.pop(context, newTestResult);
+                }
               },
               child: const Text('Save'),
             ),
