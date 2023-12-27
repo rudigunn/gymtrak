@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_parameter.dart';
 import 'package:intl/intl.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_category.dart';
@@ -15,9 +16,11 @@ class BottomSheetWidget extends StatefulWidget {
 
 class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   String selectedFolder = 'Select a folder';
-  String? testName;
-  String? testDate;
   List<String> selectedCategories = [];
+  late String testName;
+  late DateTime testDate;
+  String? testDateString;
+  Map<String, double> parameterValues = {};
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +47,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 5),
             TextField(
               decoration: const InputDecoration(
                 labelText: 'Test Name',
@@ -84,21 +87,23 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                   );
                   if (pickedTime != null) {
                     setState(() {
-                      var format = DateFormat('dd/MM/yyyy HH:mm');
-                      testDate = format.format(DateTime(
+                      testDate = DateTime(
                         pickedDate.year,
                         pickedDate.month,
                         pickedDate.day,
                         pickedTime.hour,
                         pickedTime.minute,
-                      ));
+                      );
+
+                      var format = DateFormat('dd/MM/yyyy HH:mm');
+                      testDateString = format.format(testDate);
                     });
                   }
                 }
               },
               child: const Text('Select Date and Time'),
             ),
-            Text(testDate ?? 'No Date and Time Chosen'),
+            Text(testDateString ?? 'No Date and Time Chosen'),
             const SizedBox(height: 20),
             SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -111,7 +116,6 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                           padding: const EdgeInsets.all(4.0),
                           child: FilterChip(
                             label: Text(category),
-                            selectedShadowColor: Colors.green,
                             selected: selectedCategories.contains(category),
                             onSelected: (isSelected) {
                               setState(() {
@@ -125,7 +129,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                           ),
                         ),
                       )
-                      .toList(), // Convert the iterable to a list here
+                      .toList(),
                 )),
             const SizedBox(height: 20),
             ListView.builder(
@@ -133,14 +137,21 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
               itemCount: filteredParameters.length,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
+                final parameter = filteredParameters[index];
+                final parameterName = parameter.name;
+                final valueExists = parameterValues.containsKey(parameterName);
+
                 return ListTile(
-                  title: Text(filteredParameters[index].name),
-                  subtitle: Text(filteredParameters[index].fullName),
-                  trailing: IconButton(
-                    icon: const Icon(Symbols.arrow_right),
-                    color: Colors.black,
-                    onPressed: () {},
-                  ),
+                  title: Text(parameter.name),
+                  subtitle: Text(parameter.fullName),
+                  trailing: valueExists
+                      ? Text('${parameterValues[parameterName]!} ${parameter.unit}',
+                          style: const TextStyle(fontSize: 16, color: Colors.black54))
+                      : IconButton(
+                          icon: const Icon(Symbols.arrow_right),
+                          onPressed: () => _showParameterInput(parameter),
+                        ),
+                  onTap: () => _showParameterInput(parameter),
                 );
               },
             ),
@@ -156,15 +167,17 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                   splashFactory: NoSplash.splashFactory),
               onPressed: () {
                 BloodWorkResult newTestResult = BloodWorkResult(
-                  folder: selectedFolder,
                   name: testName,
+                  folder: selectedFolder,
+                  date: testDate,
+                  parameterValues: parameterValues,
                 );
 
                 selectedFolder = 'Select a folder';
-                testName = null;
+                testName = '';
 
                 debugPrint(newTestResult.toString());
-                Navigator.pop(context);
+                Navigator.pop(context, newTestResult);
               },
               child: const Text('Save'),
             ),
@@ -172,5 +185,70 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
         ),
       ),
     );
+  }
+
+  Future<void> _showParameterInput(BloodWorkParameter parameter) async {
+    double? value = await showDialog<double>(
+      context: context,
+      builder: (context) {
+        TextEditingController textEditingController = TextEditingController();
+        return AlertDialog(
+          title: Text(parameter.name),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: textEditingController,
+                decoration: InputDecoration(labelText: 'Enter Value', suffixText: parameter.unit),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [LengthLimitingTextInputFormatter(15)],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                String inputValue = textEditingController.text.replaceAll(',', '.');
+                try {
+                  double convertedValue = double.parse(inputValue);
+                  Navigator.pop(context, convertedValue);
+                } catch (e) {
+                  await showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Invalid Input'),
+                        content: const Text('Please enter a valid number.'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('OK'),
+                            onPressed: () {
+                              textEditingController.clear();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              child: const Text('Save Value'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (value != null) {
+      setState(() {
+        parameterValues[parameter.name] = value;
+        debugPrint(parameterValues.toString());
+      });
+    }
   }
 }
