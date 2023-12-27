@@ -183,7 +183,11 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
 
         if (result.id != null) {
           setState(() {
-            results.add(result);
+            if (results.any((element) => element.id == result.id)) {
+              results[results.indexWhere((element) => element.id == result.id)] = result;
+            } else {
+              results.add(result);
+            }
           });
         }
       }
@@ -215,15 +219,34 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
               BloodWorkResult result = filteredResults[index];
               DateFormat format = DateFormat('dd/MM/yyyy HH:mm');
 
-              return ListTile(
-                title: Text(result.name),
-                subtitle: Text(format.format(result.date)),
-                trailing: IconButton(
-                  icon: const Icon(Symbols.arrow_right),
-                  color: Colors.black,
-                  onPressed: () {
-                    _showAddTestResultSheet(context, result);
-                  },
+              return Dismissible(
+                key: Key(result.id.toString()),
+                background: Container(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(left: 20.0),
+                  color: Colors.red,
+                  child: const Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
+                ),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) async {
+                  await BloodWorkDatabaseHelper.instance.deleteBloodWorkResult(result.id!);
+                  setState(() {
+                    results.remove(result);
+                  });
+                },
+                child: ListTile(
+                  title: Text(result.name),
+                  subtitle: Text(format.format(result.date)),
+                  trailing: IconButton(
+                    icon: const Icon(Symbols.arrow_right),
+                    color: Colors.black,
+                    onPressed: () {
+                      _showAddTestResultSheet(context, result);
+                    },
+                  ),
                 ),
               );
             },
