@@ -12,10 +12,10 @@ class BottomSheetWidget extends StatefulWidget {
   final List<String> folders;
   final BloodWorkResult? existingResult;
 
-  const BottomSheetWidget({super.key, required this.folders, this.existingResult});
+  const BottomSheetWidget({Key? key, required this.folders, this.existingResult}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _BottomSheetWidgetState();
+  _BottomSheetWidgetState createState() => _BottomSheetWidgetState();
 }
 
 class _BottomSheetWidgetState extends State<BottomSheetWidget> {
@@ -31,28 +31,26 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.existingResult != null) {
-      testName = widget.existingResult!.name;
-      selectedFolder = widget.existingResult!.folder;
-      testDate = widget.existingResult!.date;
-      parameterValues = widget.existingResult!.parameterValues;
-      var format = DateFormat('dd/MM/yyyy HH:mm');
-      testDateString = format.format(testDate);
-    } else {
-      testName = '';
-      testDate = DateTime.now();
-      parameterValues = {};
-      testDateString = null;
-    }
+    _initializeState();
+  }
+
+  void _initializeState() {
+    testName = widget.existingResult?.name ?? '';
+    selectedFolder = widget.existingResult?.folder ?? 'Select a folder';
+    testDate = widget.existingResult?.date ?? DateTime.now();
+    parameterValues = widget.existingResult?.parameterValues ?? {};
+    testDateString = _formatDate(testDate);
     _loadParameters();
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('dd/MM/yyyy HH:mm').format(date);
   }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height * 0.90;
-    final List<BloodWorkParameter> filteredParameters = parameters.values.where((parameter) {
-      return selectedCategories.isEmpty || selectedCategories.contains(parameter.category);
-    }).toList();
+    final List<BloodWorkParameter> filteredParameters = _filterParameters();
 
     return Container(
       height: height,
@@ -61,178 +59,191 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Center(
-              child: Container(
-                width: 100,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 190, 190, 190),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
+            _buildSeparator(),
             const SizedBox(height: 5),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Test Name',
-                helperText: 'Enter a name for this test',
-                hintText: testName,
-                alignLabelWithHint: true,
-              ),
-              onChanged: (String value) {
-                testName = value;
-              },
-            ),
+            _buildTextField('Test Name', 'Enter a name for this test', hintText: testName, onChanged: (value) {
+              testName = value;
+            }),
             const SizedBox(height: 20),
-            DropdownButton<String>(
-              items: widget.folders.map((String folder) {
-                return DropdownMenuItem<String>(
-                  value: folder,
-                  child: Text(folder),
-                );
-              }).toList(),
-              hint: Text(selectedFolder),
-              onChanged: (String? value) {
-                setState(() {
-                  selectedFolder = value ?? 'Select a folder';
-                });
-              },
-            ),
+            _buildFolderDropdown(),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2025),
-                );
-                if (pickedDate != null) {
-                  TimeOfDay? pickedTime = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay.now(),
-                  );
-                  if (pickedTime != null) {
-                    setState(() {
-                      testDate = DateTime(
-                        pickedDate.year,
-                        pickedDate.month,
-                        pickedDate.day,
-                        pickedTime.hour,
-                        pickedTime.minute,
-                      );
-
-                      var format = DateFormat('dd/MM/yyyy HH:mm');
-                      testDateString = format.format(testDate);
-                    });
-                  }
-                }
-              },
-              child: const Text('Select Date and Time'),
-            ),
+            _buildDateTimePicker(),
             Text(testDateString ?? 'No Date and Time Chosen'),
             const SizedBox(height: 20),
-            SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: categories
-                      .map(
-                        (category) => Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: FilterChip(
-                            label: Text(category),
-                            selected: selectedCategories.contains(category),
-                            onSelected: (isSelected) {
-                              setState(() {
-                                if (isSelected) {
-                                  selectedCategories.add(category);
-                                } else {
-                                  selectedCategories.remove(category);
-                                }
-                              });
-                            },
-                          ),
-                        ),
-                      )
-                      .toList(),
-                )),
+            _buildCategoryFilterChips(),
             const SizedBox(height: 20),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: filteredParameters.length,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final parameter = filteredParameters[index];
-                final parameterName = parameter.name;
-                final valueExists = parameterValues.containsKey(parameterName);
-
-                return ListTile(
-                  title: Text(parameter.name),
-                  subtitle: Text(parameter.fullName),
-                  trailing: valueExists
-                      ? Text('${parameterValues[parameterName]!} ${parameter.unit}',
-                          style: const TextStyle(fontSize: 16, color: Colors.black54))
-                      : IconButton(
-                          icon: const Icon(Symbols.arrow_right),
-                          onPressed: () => _showParameterInput(parameter),
-                        ),
-                  onTap: () => _showParameterInput(parameter),
-                );
-              },
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 15, color: Colors.white),
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(75, 45),
-                  splashFactory: NoSplash.splashFactory),
-              onPressed: () {
-                if (widget.existingResult != null) {
-                  widget.existingResult!.name = testName;
-                  widget.existingResult!.folder = selectedFolder;
-                  widget.existingResult!.date = testDate;
-                  widget.existingResult!.parameterValues = parameterValues;
-
-                  selectedFolder = 'Select a folder';
-                  testName = '';
-
-                  debugPrint(widget.existingResult.toString());
-                  Navigator.pop(context, widget.existingResult);
-                } else {
-                  BloodWorkResult newTestResult = BloodWorkResult(
-                    name: testName,
-                    folder: selectedFolder,
-                    date: testDate,
-                    parameterValues: parameterValues,
-                  );
-
-                  selectedFolder = 'Select a folder';
-                  testName = '';
-
-                  debugPrint(newTestResult.toString());
-                  Navigator.pop(context, newTestResult);
-                }
-              },
-              child: const Text('Save'),
-            ),
+            _buildParameterList(filteredParameters),
+            const SizedBox(height: 20),
+            _buildSaveButton(),
           ],
         ),
       ),
     );
   }
 
+  Widget _buildSeparator() {
+    return Center(
+      child: Container(
+        width: 100,
+        height: 4,
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 190, 190, 190),
+          borderRadius: BorderRadius.circular(2),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String labelText, String helperText,
+      {String? hintText, required ValueChanged<String> onChanged}) {
+    return TextField(
+      decoration: InputDecoration(
+        labelText: labelText,
+        helperText: helperText,
+        hintText: hintText,
+        alignLabelWithHint: true,
+      ),
+      onChanged: onChanged,
+    );
+  }
+
+  Widget _buildFolderDropdown() {
+    return DropdownButton<String>(
+      items: widget.folders.map((String folder) {
+        return DropdownMenuItem<String>(
+          value: folder,
+          child: Text(folder),
+        );
+      }).toList(),
+      hint: Text(selectedFolder),
+      onChanged: (String? value) {
+        setState(() {
+          selectedFolder = value ?? 'Select a folder';
+        });
+      },
+    );
+  }
+
+  Widget _buildDateTimePicker() {
+    return ElevatedButton(
+      onPressed: _selectDateTime,
+      child: const Text('Select Date and Time'),
+    );
+  }
+
+  void _selectDateTime() async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+
+    if (pickedDate != null) {
+      TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        setState(() {
+          testDate = DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+
+          testDateString = _formatDate(testDate);
+        });
+      }
+    }
+  }
+
+  Widget _buildCategoryFilterChips() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.all(8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: categories.map((category) => _buildFilterChip(category)).toList(),
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(String category) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: FilterChip(
+        label: Text(category),
+        selected: selectedCategories.contains(category),
+        onSelected: (isSelected) {
+          setState(() {
+            if (isSelected) {
+              selectedCategories.add(category);
+            } else {
+              selectedCategories.remove(category);
+            }
+          });
+        },
+      ),
+    );
+  }
+
+  List<BloodWorkParameter> _filterParameters() {
+    return parameters.values.where((parameter) {
+      return selectedCategories.isEmpty || selectedCategories.contains(parameter.category);
+    }).toList();
+  }
+
+  Widget _buildParameterList(List<BloodWorkParameter> filteredParameters) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: filteredParameters.length,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        final parameter = filteredParameters[index];
+        final parameterName = parameter.name;
+        final valueExists = parameterValues.containsKey(parameterName);
+
+        return ListTile(
+          title: Text(parameterName),
+          subtitle: Text(parameter.fullName),
+          trailing: valueExists
+              ? Text('${parameterValues[parameterName]!} ${parameter.unit}',
+                  style: const TextStyle(fontSize: 16, color: Colors.black54))
+              : IconButton(
+                  icon: const Icon(Symbols.arrow_right),
+                  onPressed: () => _showParameterInput(parameter),
+                ),
+          onTap: () => _showParameterInput(parameter),
+        );
+      },
+    );
+  }
+
+  Widget _buildSaveButton() {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        textStyle: const TextStyle(fontSize: 15, color: Colors.white),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        minimumSize: const Size(75, 45),
+        splashFactory: NoSplash.splashFactory,
+      ),
+      onPressed: _saveBloodWorkResult,
+      child: const Text('Save'),
+    );
+  }
+
   Future<void> _showParameterInput(BloodWorkParameter parameter) async {
+    TextEditingController textEditingController = TextEditingController();
+
     double? value = await showDialog<double>(
       context: context,
       builder: (context) {
-        TextEditingController textEditingController = TextEditingController();
         return AlertDialog(
           title: Text(parameter.name),
           content: Column(
@@ -295,14 +306,44 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
 
   Future<void> _loadParameters() async {
     Map<int, BloodWorkParameter> loadedParameters = await GeneralDatabase.instance.readAllBloodWorkParameters();
+
     if (loadedParameters.isEmpty) {
       for (BloodWorkParameter parameter in parametersInitial) {
         await GeneralDatabase.instance.createBloodWorkParameter(parameter);
       }
       loadedParameters = await GeneralDatabase.instance.readAllBloodWorkParameters();
     }
+
     setState(() {
       parameters = loadedParameters;
     });
+  }
+
+  Future<void> _saveBloodWorkResult() async {
+    if (widget.existingResult != null) {
+      widget.existingResult!.name = testName;
+      widget.existingResult!.folder = selectedFolder;
+      widget.existingResult!.date = testDate;
+      widget.existingResult!.parameterValues = parameterValues;
+
+      selectedFolder = 'Select a folder';
+      testName = '';
+
+      debugPrint(widget.existingResult.toString());
+      Navigator.pop(context, widget.existingResult);
+    } else {
+      BloodWorkResult newTestResult = BloodWorkResult(
+        name: testName,
+        folder: selectedFolder,
+        date: testDate,
+        parameterValues: parameterValues,
+      );
+
+      selectedFolder = 'Select a folder';
+      testName = '';
+
+      debugPrint(newTestResult.toString());
+      Navigator.pop(context, newTestResult);
+    }
   }
 }
