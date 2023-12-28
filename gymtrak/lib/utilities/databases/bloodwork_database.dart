@@ -48,6 +48,11 @@ class BloodWorkDatabaseHelper {
           ''');
   }
 
+  Future close() async {
+    final db = await instance.database;
+    db.close();
+  }
+
   Future<int> insertBloodWorkResult(BloodWorkResult result) async {
     final db = await instance.database;
     var map = result.toMap();

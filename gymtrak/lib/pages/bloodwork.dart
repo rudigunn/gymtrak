@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_botom_sheet.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_result.dart';
 import 'package:gymtrak/utilities/databases/bloodwork_database.dart';
+import 'package:gymtrak/utilities/databases/general_database.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,7 +15,7 @@ class UserBloodWorkPage extends StatefulWidget {
 }
 
 class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
-  List<String> folders = ['Default Folder'];
+  Map<int, String> folders = {};
   List<BloodWorkResult> results = [];
   final TextEditingController _folderNameController = TextEditingController();
 
@@ -22,6 +23,7 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
   void initState() {
     super.initState();
     loadData();
+    loadFolders();
   }
 
   @override
@@ -111,6 +113,13 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
     });
   }
 
+  void loadFolders() async {
+    Map<int, String> data = await GeneralDatabase.instance.readAllFolders();
+    setState(() {
+      folders = data;
+    });
+  }
+
   void _addNewFolder() {
     showDialog(
       context: context,
@@ -146,13 +155,16 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
                 'Add',
                 style: TextStyle(color: Colors.black87),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_folderNameController.text.isNotEmpty) {
+                  Navigator.of(context).pop();
+                  int i = await GeneralDatabase.instance.createFolder(_folderNameController.text);
                   setState(() {
-                    folders.add(_folderNameController.text);
+                    if (i != 0) {
+                      folders[i] = _folderNameController.text;
+                    }
                     _folderNameController.clear();
                   });
-                  Navigator.of(context).pop();
                 }
               },
             ),
@@ -168,7 +180,7 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
       isScrollControlled: true,
       builder: (BuildContext context) {
         return BottomSheetWidget(
-          folders: folders,
+          folders: folders.values.toList(),
           existingResult: existingResult,
         );
       },
@@ -181,7 +193,7 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
           await BloodWorkDatabaseHelper.instance.updateBloodWorkResult(result);
         }
 
-        if (result.id != null) {
+        if (result.id != 0) {
           setState(() {
             if (results.any((element) => element.id == result.id)) {
               results[results.indexWhere((element) => element.id == result.id)] = result;
@@ -195,7 +207,10 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
   }
 
   List<Widget> _buildResultExpansionTiles() {
-    return folders.map((folder) {
+    return folders.entries.toList().map((entry) {
+      String folder = entry.value;
+      int folderId = entry.key;
+
       List<BloodWorkResult> filteredResults = results.where((result) => result.folder == folder).toList();
 
       return ExpansionTile(
@@ -207,7 +222,102 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
           data: ThemeData(splashFactory: NoSplash.splashFactory),
           child: IconButton(
             icon: const Icon(Symbols.more_vert, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              TextEditingController renameController = TextEditingController();
+
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Folder Actions'),
+                    content: SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          TextField(
+                            controller: renameController,
+                            decoration: const InputDecoration(
+                              labelText: 'New Folder Name',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Delete'),
+                        onPressed: () async {
+                          Navigator.of(context).pop();
+
+                          int deletionCount = await GeneralDatabase.instance.deleteFolder(folderId);
+                          if (deletionCount != 0) {
+                            List<BloodWorkResult> remainingResults = [];
+
+                            for (var result in results) {
+                              if (result.folder == folder) {
+                                await BloodWorkDatabaseHelper.instance.deleteBloodWorkResult(result.id!);
+                              } else {
+                                remainingResults.add(result);
+                              }
+                            }
+
+                            setState(() {
+                              results = remainingResults;
+                              folders.remove(folderId);
+                            });
+                          }
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Rename'),
+                        onPressed: () async {
+                          String newName = renameController.text;
+
+                          if (newName.isEmpty) {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Error'),
+                                  content: const Text('Folder name cannot be empty'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            return;
+                          }
+
+                          Navigator.of(context).pop(); // Close the rename dialog
+
+                          int i = await GeneralDatabase.instance.updateFolder(folderId, newName);
+                          if (i != 0) {
+                            List<BloodWorkResult> updatedResults = [];
+                            for (var result in results) {
+                              if (result.folder == folder) {
+                                result.folder = newName;
+                                await BloodWorkDatabaseHelper.instance.updateBloodWorkResult(result);
+                                updatedResults.add(result);
+                              }
+                            }
+
+                            setState(() {
+                              folders[folderId] = newName;
+                              results = updatedResults;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
         ),
         children: [

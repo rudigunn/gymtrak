@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_parameter.dart';
+import 'package:gymtrak/utilities/databases/general_database.dart';
+import 'package:gymtrak/utilities/misc/initial_values.dart';
 import 'package:intl/intl.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_category.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_result.dart';
@@ -17,12 +19,14 @@ class BottomSheetWidget extends StatefulWidget {
 }
 
 class _BottomSheetWidgetState extends State<BottomSheetWidget> {
-  String selectedFolder = 'Select a folder';
-  List<String> selectedCategories = [];
   late String testName;
   late DateTime testDate;
   String? testDateString;
+  String selectedFolder = 'Select a folder';
+
+  List<String> selectedCategories = [];
   Map<String, double> parameterValues = {};
+  Map<int, BloodWorkParameter> parameters = {};
 
   @override
   void initState() {
@@ -40,12 +44,13 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
       parameterValues = {};
       testDateString = null;
     }
+    _loadParameters();
   }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height * 0.90;
-    final List<BloodWorkParameter> filteredParameters = parameters.where((parameter) {
+    final List<BloodWorkParameter> filteredParameters = parameters.values.where((parameter) {
       return selectedCategories.isEmpty || selectedCategories.contains(parameter.category);
     }).toList();
 
@@ -69,8 +74,11 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             ),
             const SizedBox(height: 5),
             TextField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Test Name',
+                helperText: 'Enter a name for this test',
+                hintText: testName,
+                alignLabelWithHint: true,
               ),
               onChanged: (String value) {
                 testName = value;
@@ -283,5 +291,18 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
         debugPrint(parameterValues.toString());
       });
     }
+  }
+
+  Future<void> _loadParameters() async {
+    Map<int, BloodWorkParameter> loadedParameters = await GeneralDatabase.instance.readAllBloodWorkParameters();
+    if (loadedParameters.isEmpty) {
+      for (BloodWorkParameter parameter in parametersInitial) {
+        await GeneralDatabase.instance.createBloodWorkParameter(parameter);
+      }
+      loadedParameters = await GeneralDatabase.instance.readAllBloodWorkParameters();
+    }
+    setState(() {
+      parameters = loadedParameters;
+    });
   }
 }
