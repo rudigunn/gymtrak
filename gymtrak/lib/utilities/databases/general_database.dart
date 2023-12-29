@@ -124,4 +124,10 @@ class GeneralDatabase {
       whereArgs: [id],
     );
   }
+
+  Future<void> deleteAllTables() async {
+    final db = await instance.database;
+    await db.delete(tableBloodworkParameters);
+    await db.delete(tableBloodworkFolders);
+  }
 }

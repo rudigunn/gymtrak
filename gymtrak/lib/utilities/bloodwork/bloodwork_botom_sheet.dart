@@ -27,6 +27,9 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   List<String> selectedCategories = [];
   Map<String, double> parameterValues = {};
   Map<int, BloodWorkParameter> parameters = {};
+  List<BloodWorkParameter> filteredParameters = [];
+
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -34,7 +37,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
     _initializeState();
   }
 
-  void _initializeState() {
+  Future<void> _initializeState() async {
     testName = widget.existingResult?.name ?? '';
     selectedFolder = widget.existingResult?.folder ?? 'Select a folder';
     testDate = widget.existingResult?.date ?? DateTime.now();
@@ -50,7 +53,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height * 0.90;
-    final List<BloodWorkParameter> filteredParameters = _filterParameters();
+    filteredParameters = _filterParameters();
 
     return Container(
       height: height,
@@ -71,6 +74,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             Text(testDateString ?? 'No Date and Time Chosen'),
             const SizedBox(height: 20),
             _buildCategoryFilterChips(),
+            const SizedBox(height: 20),
+            _buildSearchBar(),
             const SizedBox(height: 20),
             _buildParameterList(filteredParameters),
             const SizedBox(height: 20),
@@ -104,6 +109,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
         hintText: hintText,
         alignLabelWithHint: true,
       ),
+      inputFormatters: [LengthLimitingTextInputFormatter(30)],
+      maxLines: 1,
       onChanged: onChanged,
     );
   }
@@ -173,6 +180,24 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
     );
   }
 
+  Widget _buildSearchBar() {
+    return TextField(
+      controller: searchController,
+      decoration: const InputDecoration(
+        labelText: 'Search Parameters',
+        prefixIcon: Icon(Icons.search),
+      ),
+      keyboardType: TextInputType.multiline,
+      maxLines: 1,
+      inputFormatters: [LengthLimitingTextInputFormatter(20)],
+      onChanged: (value) {
+        setState(() {
+          filteredParameters = _filterParameters();
+        });
+      },
+    );
+  }
+
   Widget _buildFilterChip(String category) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
@@ -193,8 +218,13 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   }
 
   List<BloodWorkParameter> _filterParameters() {
+    String searchTerm = searchController.text.toLowerCase();
+
     return parameters.values.where((parameter) {
-      return selectedCategories.isEmpty || selectedCategories.contains(parameter.category);
+      return (selectedCategories.isEmpty || selectedCategories.contains(parameter.category)) &&
+          (searchTerm.isEmpty ||
+              parameter.name.toLowerCase().startsWith(searchTerm) ||
+              parameter.fullName.toLowerCase().startsWith(searchTerm));
     }).toList();
   }
 

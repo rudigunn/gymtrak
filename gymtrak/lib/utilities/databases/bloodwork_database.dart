@@ -110,4 +110,9 @@ class BloodWorkDatabaseHelper {
     );
     return result.isNotEmpty;
   }
+
+  Future<void> deleteAllTables() async {
+    final db = await instance.database;
+    await db.delete(table);
+  }
 }
