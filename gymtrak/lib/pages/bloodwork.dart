@@ -216,16 +216,19 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
       int folderId = entry.key;
       List<BloodWorkResult> filteredResults = results.where((result) => result.folder == folder).toList();
 
-      return ExpansionTile(
-        title: Text(
-          folder,
-          style: const TextStyle(fontSize: 18),
+      return Theme(
+        data: ThemeData(dividerColor: Colors.black26),
+        child: ExpansionTile(
+          title: Text(
+            folder,
+            style: const TextStyle(fontSize: 18),
+          ),
+          controlAffinity: ListTileControlAffinity.leading,
+          trailing: _buildPopupMenuButton(context, folderId),
+          children: [
+            _buildResultsList(filteredResults),
+          ],
         ),
-        controlAffinity: ListTileControlAffinity.leading,
-        trailing: _buildPopupMenuButton(context, folderId),
-        children: [
-          _buildResultsList(filteredResults),
-        ],
       );
     }).toList();
   }
