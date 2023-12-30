@@ -5,7 +5,6 @@ import 'package:gymtrak/utilities/databases/bloodwork_database.dart';
 import 'package:gymtrak/utilities/databases/general_database.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:path_provider/path_provider.dart';
 
 class UserBloodWorkPage extends StatefulWidget {
   const UserBloodWorkPage({super.key});
@@ -22,8 +21,8 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
   @override
   void initState() {
     super.initState();
-    loadData();
     loadFolders();
+    loadData();
   }
 
   @override
@@ -86,7 +85,6 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
                           icon: const Icon(Icons.create_new_folder, color: Colors.black87),
                           onPressed: () async {
                             _addNewFolder();
-                            debugPrint(((await getApplicationDocumentsDirectory()).toString()));
                           },
                         ),
                       ),
@@ -237,6 +235,8 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
     return Theme(
       data: ThemeData(splashFactory: NoSplash.splashFactory),
       child: PopupMenuButton(
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         itemBuilder: (context) => [
           PopupMenuItem(
             value: 1,
@@ -426,8 +426,8 @@ class _UserBloodWorkPageState extends State<UserBloodWorkPage> {
 
   Widget _buildDialogButton({required String text, required void Function()? onPressed}) {
     return TextButton(
-      child: Text(text),
       onPressed: onPressed,
+      child: Text(text),
     );
   }
 }

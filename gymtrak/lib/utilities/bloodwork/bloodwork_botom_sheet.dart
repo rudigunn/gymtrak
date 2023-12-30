@@ -129,6 +129,10 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
           selectedFolder = value ?? 'Select a folder';
         });
       },
+      underline: Container(),
+      style: const TextStyle(color: Colors.black),
+      elevation: 1,
+      borderRadius: BorderRadius.circular(15),
     );
   }
 
