@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:gymtrak/utilities/medication/medication_entry.dart';
+import 'package:gymtrak/utilities/medication/medication_component.dart';
 import 'package:gymtrak/utilities/medication/medication_plan.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sembast/sembast.dart';
+import 'package:sembast/sembast_io.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -10,21 +10,12 @@ class MedicationDatabaseHelper {
   static const _databaseVersion = 1;
   static const tableMedicationEntries = 'medication_entries';
   static const tableMedicationPlans = 'medication_plans';
-
-  static const columnId = 'id';
-  static const columnNotes = 'notes';
-  static const columnName = 'name';
-  static const columnFolder = 'folder';
-  static const columnDosage = 'dosage';
-  static const columnActive = 'active';
-  static const columnDate = 'date';
-  static const columnDescription = 'description';
-  static const columnComponent = 'medicationComponent';
-  static const columnMedicationComponentPlanMap = 'medication_component_plan_map';
+  static const tableMedicationComponents = 'medication_components';
 
   // Singleton class setup
   MedicationDatabaseHelper._privateConstructor();
-  static final MedicationDatabaseHelper instance = MedicationDatabaseHelper._privateConstructor();
+  static final MedicationDatabaseHelper instance =
+      MedicationDatabaseHelper._privateConstructor();
 
   // Single database reference
   static Database? _database;
@@ -38,91 +29,129 @@ class MedicationDatabaseHelper {
   _initDatabase() async {
     var documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
-    return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
+    var dbFactory = databaseFactoryIo;
+    return await dbFactory.openDatabase(path, version: _databaseVersion);
   }
 
-  Future _onCreate(Database db, int version) async {
-    await db.execute('''
-          CREATE TABLE $tableMedicationPlans(
-            $columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            $columnName TEXT NOT NULL,
-            $columnFolder TEXT NOT NULL,
-            $columnDescription TEXT NOT NULL,
-            $columnActive INT NOT NULL,
-            $columnMedicationComponentPlanMap TEXT NOT NULL
-          )
-          ''');
-
-    await db.execute('''
-          CREATE TABLE $tableMedicationEntries(
-            $columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-            $columnNotes TEXT NOT NULL,
-            $columnDosage REAL NOT NULL,
-            $columnDate TEXT NOT NULL,
-            $columnComponent TEXT NOT NULL
-          )
-          ''');
+  // Delete the database
+  _deleteDatabase() async {
+    var documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, _databaseName);
+    var dbFactory = databaseFactoryIo;
+    _database = null;
+    return await dbFactory.deleteDatabase(path);
   }
 
-  Future close() async {
-    final db = await instance.database;
-    db.close();
-  }
+  // CRUD operations
 
-  Future<int> insertMedicationEntry(MedicationEntry medicationEntry) async {
-    var dbClient = await database;
-    var result = await dbClient.insert(tableMedicationEntries, medicationEntry.toMap());
-    return result;
-  }
-
-  Future<List<MedicationEntry>> getMedicationEntries() async {
-    var dbClient = await database;
-    List<Map> maps = await dbClient.query(tableMedicationEntries, columns: [
-      columnId,
-      columnNotes,
-      columnDosage,
-      columnDate,
-      columnComponent,
-    ]);
-    List<MedicationEntry> medicationEntries = [];
-    if (maps.isNotEmpty) {
-      for (int i = 0; i < maps.length; i++) {
-        medicationEntries.add(MedicationEntry.fromMap(maps[i] as Map<String, dynamic>));
-      }
-    }
-    return medicationEntries;
-  }
-
-  // Insert a new MedicationPlan
+  // MedicationPlan
   Future<int> insertMedicationPlan(MedicationPlan medicationPlan) async {
-    Database db = await database;
-    debugPrint('');
-    debugPrint(medicationPlan.toMap().toString());
-    debugPrint('');
-    return await db.insert(tableMedicationPlans, medicationPlan.toMap());
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationPlans);
+    return await store.add(db, medicationPlan.toMap());
   }
 
-  // Update an existing MedicationPlan
-  Future<int> updateMedicationPlan(MedicationPlan medicationPlan) async {
-    Database db = await database;
-    return await db
-        .update(tableMedicationPlans, medicationPlan.toMap(), where: '$columnId = ?', whereArgs: [medicationPlan.id]);
-  }
-
-  // Delete a MedicationPlan
-  Future<int> deleteMedicationPlan(int id) async {
-    Database db = await database;
-    return await db.delete(tableMedicationPlans, where: '$columnId = ?', whereArgs: [id]);
-  }
-
-  // Retrieve all MedicationPlans
-  Future<List<MedicationPlan>> getAllMedicationPlans() async {
-    Database db = await database;
-    List<Map> maps = await db.query(tableMedicationPlans);
-    debugPrint(maps.toString());
-    if (maps.isEmpty) {
-      return [];
+  Future<MedicationPlan?> getMedicationPlan(int id) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationPlans);
+    var record = store.record(id);
+    var recordValue = await record.get(db);
+    if (recordValue == null) {
+      return null;
     }
-    return List.generate(maps.length, (i) => MedicationPlan.fromMap(maps[i] as Map<String, dynamic>));
+    if (recordValue.containsValue(null)) {
+      return null;
+    }
+    return MedicationPlan.fromMap(recordValue);
+  }
+
+  Future<int> updateMedicationPlan(MedicationPlan medicationPlan) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationPlans);
+    return await store.update(db, medicationPlan.toMap(),
+        finder: Finder(filter: Filter.byKey(medicationPlan.id)));
+  }
+
+  Future<int> deleteMedicationPlan(MedicationPlan medicationPlan) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationPlans);
+    return await store.delete(db,
+        finder: Finder(filter: Filter.byKey(medicationPlan.id)));
+  }
+
+  Future<int> deleteMedicationPlanWithId(int id) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationPlans);
+    return await store.delete(db, finder: Finder(filter: Filter.byKey(id)));
+  }
+
+  Future<List<MedicationPlan>> getAllMedicationPlans() async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationPlans);
+    var results = await store.find(db);
+    return results.map((e) {
+      MedicationPlan plan = MedicationPlan.fromMap(e.value);
+      plan.id = e.key;
+      return plan;
+    }).toList();
+  }
+
+  Future<void> deleteDatabase() async {
+    await _deleteDatabase();
+  }
+
+  // MedicationComponent
+  Future<int> insertMedicationComponent(
+      MedicationComponent medicationComponent) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponents);
+    return await store.add(db, medicationComponent.toMap());
+  }
+
+  Future<MedicationComponent?> getMedicationComponent(int id) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponents);
+    var record = store.record(id);
+    var recordValue = await record.get(db);
+    if (recordValue == null) {
+      return null;
+    }
+    if (recordValue.containsValue(null)) {
+      return null;
+    }
+    return MedicationComponent.fromMap(recordValue);
+  }
+
+  Future<int> updateMedicationComponent(
+      MedicationComponent medicationComponent) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponents);
+    return await store.update(db, medicationComponent.toMap(),
+        finder: Finder(filter: Filter.byKey(medicationComponent.id)));
+  }
+
+  Future<int> deleteMedicationComponent(
+      MedicationComponent medicationComponent) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponents);
+    return await store.delete(db,
+        finder: Finder(filter: Filter.byKey(medicationComponent.id)));
+  }
+
+  Future<int> deleteMedicationComponentWithId(int id) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponents);
+    return await store.delete(db, finder: Finder(filter: Filter.byKey(id)));
+  }
+
+  Future<List<MedicationComponent>> getAllMedicationComponents() async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponents);
+    var results = await store.find(db);
+    return results.map((e) {
+      MedicationComponent component = MedicationComponent.fromMap(e.value);
+      component.id = e.key;
+      return component;
+    }).toList();
   }
 }

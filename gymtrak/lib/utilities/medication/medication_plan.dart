@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:gymtrak/utilities/medication/medication_component_plan.dart';
 
 class MedicationPlan {
@@ -8,14 +6,14 @@ class MedicationPlan {
   String folder;
   String description;
   bool active;
-  Map<int, MedicationComponentPlan> medicationComponentPlanMap = {};
+  List<MedicationComponentPlan> medicationComponentPlans = [];
 
   MedicationPlan({
     this.id,
     required this.name,
     required this.folder,
     required this.active,
-    required this.medicationComponentPlanMap,
+    required this.medicationComponentPlans,
     required this.description,
   });
 
@@ -24,23 +22,23 @@ class MedicationPlan {
       'id': id,
       'name': name,
       'folder': folder,
+      'active': active,
       'description': description,
-      'active': active ? 1 : 0,
       'medicationComponentPlanMap':
-          json.encode(medicationComponentPlanMap.map((key, value) => MapEntry(key.toString(), value.toMap())))
+          medicationComponentPlans.map((e) => e.toMap()).toList(),
     };
   }
 
-  // Convert database Map to MedicationPlan object
   factory MedicationPlan.fromMap(Map<String, dynamic> map) {
     return MedicationPlan(
-        id: map['id'],
-        name: map['name'],
-        folder: map['folder'],
-        description: map['description'],
-        active: map['active'] == 1,
-        medicationComponentPlanMap: (json.decode(map['medicationComponentPlanMap'] as String) as Map<String, dynamic>)
-            .map((key, value) =>
-                MapEntry(int.parse(key), MedicationComponentPlan.fromMap(value as Map<String, dynamic>))));
+      id: map['id'],
+      name: map['name'],
+      folder: map['folder'],
+      active: map['active'],
+      description: map['description'],
+      medicationComponentPlans: List<MedicationComponentPlan>.from(
+          map['medicationComponentPlanMap']
+              .map((e) => MedicationComponentPlan.fromMap(e))),
+    );
   }
 }

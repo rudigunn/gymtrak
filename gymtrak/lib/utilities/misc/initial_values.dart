@@ -1,12 +1,14 @@
 import 'package:gymtrak/utilities/bloodwork/bloodwork_category.dart';
 import 'package:gymtrak/utilities/bloodwork/bloodwork_parameter.dart';
+import 'package:gymtrak/utilities/medication/medication_component.dart';
+import 'package:gymtrak/utilities/medication/medication_category.dart';
 
 List<BloodWorkParameter> parametersInitial = [
   // A
   BloodWorkParameter(
     name: 'ACE',
     fullName: 'Angiotensin Converting Enzyme',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 100,
     lowerLimit: 0,
     unit: 'U/L',
@@ -14,7 +16,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'ALAT',
     fullName: 'Alanine Aminotransferase',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 50,
     lowerLimit: 0,
     unit: 'U/L',
@@ -22,7 +24,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Albumin im Serum',
     fullName: 'Albumin in Serum',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 5,
     lowerLimit: 3,
     unit: 'g/dL',
@@ -30,7 +32,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Alkalische Phosphatase',
     fullName: 'Alkaline Phosphatase',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 130,
     lowerLimit: 20,
     unit: 'U/L',
@@ -38,7 +40,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Alpha-Fetoprotein – Tumormarker AFP',
     fullName: 'Alpha-Fetoprotein Tumor Marker AFP',
-    category: Category.getName(ParameterCategory.cancerMarkers),
+    category: ParameterCategoryClass.getName(ParameterCategory.cancerMarkers),
     upperLimit: 10,
     lowerLimit: 0,
     unit: 'ng/mL',
@@ -46,7 +48,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Alpha1-Antitrypsin',
     fullName: 'Alpha-1 Antitrypsin',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 40,
     lowerLimit: 20,
     unit: 'mg/dL',
@@ -54,7 +56,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Alpha1-Globuline',
     fullName: 'Alpha-1 Globulins',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 0.3,
     lowerLimit: 0.1,
     unit: 'g/dL',
@@ -62,7 +64,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Alpha2-Globuline',
     fullName: 'Alpha-2 Globulins',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 0.8,
     lowerLimit: 0.3,
     unit: 'g/dL',
@@ -70,7 +72,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'AMA',
     fullName: 'Antimitochondrial Antibodies',
-    category: Category.getName(ParameterCategory.autoimmune),
+    category: ParameterCategoryClass.getName(ParameterCategory.autoimmune),
     upperLimit: 20,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -78,7 +80,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Amylase',
     fullName: 'Amylase',
-    category: Category.getName(ParameterCategory.pancreas),
+    category: ParameterCategoryClass.getName(ParameterCategory.pancreas),
     upperLimit: 120,
     lowerLimit: 25,
     unit: 'U/L',
@@ -86,7 +88,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'ANA',
     fullName: 'Antinuclear Antibodies',
-    category: Category.getName(ParameterCategory.autoimmune),
+    category: ParameterCategoryClass.getName(ParameterCategory.autoimmune),
     upperLimit: 1,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -94,7 +96,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Anti-CCP',
     fullName: 'Anti-Cyclic Citrullinated Peptide',
-    category: Category.getName(ParameterCategory.autoimmune),
+    category: ParameterCategoryClass.getName(ParameterCategory.autoimmune),
     upperLimit: 20,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -102,7 +104,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Anti-ds-DNA',
     fullName: 'Anti-Double Stranded DNA',
-    category: Category.getName(ParameterCategory.autoimmune),
+    category: ParameterCategoryClass.getName(ParameterCategory.autoimmune),
     upperLimit: 30,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -110,7 +112,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Anti-HBs',
     fullName: 'Hepatitis B Surface Antibodies',
-    category: Category.getName(ParameterCategory.infection),
+    category: ParameterCategoryClass.getName(ParameterCategory.infection),
     upperLimit: 10,
     lowerLimit: 0,
     unit: 'mIU/mL',
@@ -118,7 +120,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Anti-Müller Hormon',
     fullName: 'Anti-Müllerian Hormone',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 10,
     lowerLimit: 0,
     unit: 'ng/mL',
@@ -126,7 +128,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Antithrombin 3',
     fullName: 'Antithrombin 3',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 120,
     lowerLimit: 80,
     unit: '%',
@@ -134,7 +136,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'ASAT',
     fullName: 'Aspartate Aminotransferase',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 40,
     lowerLimit: 0,
     unit: 'U/L',
@@ -142,7 +144,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'ASL-Titer',
     fullName: 'Anti-Streptolysin O Titer',
-    category: Category.getName(ParameterCategory.infection),
+    category: ParameterCategoryClass.getName(ParameterCategory.infection),
     upperLimit: 200,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -150,7 +152,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'ASMA',
     fullName: 'Anti-Smooth Muscle Antibodies',
-    category: Category.getName(ParameterCategory.autoimmune),
+    category: ParameterCategoryClass.getName(ParameterCategory.autoimmune),
     upperLimit: 20,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -160,7 +162,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Basophile Granulozyten',
     fullName: 'Basophil Granulocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 2,
     lowerLimit: 0,
     unit: '%',
@@ -168,7 +170,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Beta-Globuline',
     fullName: 'Beta Globulins',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 1,
     lowerLimit: 0,
     unit: 'g/dL',
@@ -176,7 +178,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Beta2-Mikroglobulin',
     fullName: 'Beta-2 Microglobulin',
-    category: Category.getName(ParameterCategory.kidney),
+    category: ParameterCategoryClass.getName(ParameterCategory.kidney),
     upperLimit: 2.5,
     lowerLimit: 0.8,
     unit: 'mg/L',
@@ -184,7 +186,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Bilirubinwert gesamt',
     fullName: 'Total Bilirubin',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 1.2,
     lowerLimit: 0.2,
     unit: 'mg/dL',
@@ -192,7 +194,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Blutdruck',
     fullName: 'Blood Pressure',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 120,
     lowerLimit: 80,
     unit: 'mmHg',
@@ -200,14 +202,14 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
       name: 'BNP',
       fullName: 'Brain Natriuretic Peptide',
-      category: Category.getName(ParameterCategory.heart),
+      category: ParameterCategoryClass.getName(ParameterCategory.heart),
       upperLimit: 100,
       lowerLimit: 0,
       unit: 'pg'),
   BloodWorkParameter(
     name: 'BSG Blutsenkung',
     fullName: 'Erythrocyte Sedimentation Rate',
-    category: Category.getName(ParameterCategory.inflammation),
+    category: ParameterCategoryClass.getName(ParameterCategory.inflammation),
     upperLimit: 10,
     lowerLimit: 0,
     unit: 'mm/h',
@@ -215,7 +217,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'BUN',
     fullName: 'Blood Urea Nitrogen',
-    category: Category.getName(ParameterCategory.kidney),
+    category: ParameterCategoryClass.getName(ParameterCategory.kidney),
     upperLimit: 20,
     lowerLimit: 5,
     unit: 'mg/dL',
@@ -225,7 +227,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'c-ANCA',
     fullName: 'Cytoplasmic Anti-Neutrophil Cytoplasmic Antibodies',
-    category: Category.getName(ParameterCategory.autoimmune),
+    category: ParameterCategoryClass.getName(ParameterCategory.autoimmune),
     upperLimit: 20,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -233,7 +235,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'C-Peptid',
     fullName: 'C-Peptide',
-    category: Category.getName(ParameterCategory.pancreas),
+    category: ParameterCategoryClass.getName(ParameterCategory.pancreas),
     upperLimit: 3,
     lowerLimit: 0.5,
     unit: 'ng/mL',
@@ -241,7 +243,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'C3 Komplement',
     fullName: 'Complement C3',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 180,
     lowerLimit: 90,
     unit: 'mg/dL',
@@ -249,7 +251,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'C4 Komplement',
     fullName: 'Complement C4',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 40,
     lowerLimit: 10,
     unit: 'mg/dL',
@@ -257,7 +259,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CA 19-9 Tumormarker',
     fullName: 'CA 19-9 Tumor Marker',
-    category: Category.getName(ParameterCategory.cancerMarkers),
+    category: ParameterCategoryClass.getName(ParameterCategory.cancerMarkers),
     upperLimit: 37,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -265,7 +267,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CA-125 Tumormarker',
     fullName: 'CA-125 Tumor Marker',
-    category: Category.getName(ParameterCategory.cancerMarkers),
+    category: ParameterCategoryClass.getName(ParameterCategory.cancerMarkers),
     upperLimit: 35,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -273,7 +275,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Calcium',
     fullName: 'Calcium',
-    category: Category.getName(ParameterCategory.electrolytes),
+    category: ParameterCategoryClass.getName(ParameterCategory.electrolytes),
     upperLimit: 2.6,
     lowerLimit: 2.1,
     unit: 'mmol/L',
@@ -281,7 +283,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CD3 T-Lymphozyten',
     fullName: 'CD3 T-Lymphocytes',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 2000,
     lowerLimit: 800,
     unit: '/µL',
@@ -289,7 +291,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CD4 – CD8 Quotient',
     fullName: 'CD4 to CD8 Ratio',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 4,
     lowerLimit: 1,
     unit: 'ratio',
@@ -297,7 +299,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CD4 T-Lymphozyten',
     fullName: 'CD4 T-Lymphocytes',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 1500,
     lowerLimit: 500,
     unit: '/µL',
@@ -305,7 +307,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CD8 T-Lymphozyten',
     fullName: 'CD8 T-Lymphocytes',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 1000,
     lowerLimit: 300,
     unit: '/µL',
@@ -313,7 +315,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CEA',
     fullName: 'Carcinoembryonic Antigen',
-    category: Category.getName(ParameterCategory.cancerMarkers),
+    category: ParameterCategoryClass.getName(ParameterCategory.cancerMarkers),
     upperLimit: 5,
     lowerLimit: 0,
     unit: 'ng/mL',
@@ -321,7 +323,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Chlorid im Blut',
     fullName: 'Chloride in Blood',
-    category: Category.getName(ParameterCategory.electrolytes),
+    category: ParameterCategoryClass.getName(ParameterCategory.electrolytes),
     upperLimit: 110,
     lowerLimit: 98,
     unit: 'mmol/L',
@@ -329,7 +331,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Cholesterin',
     fullName: 'Cholesterol',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 200,
     lowerLimit: 0,
     unit: 'mg/dL',
@@ -337,7 +339,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Cholesterin',
     fullName: 'Cholesterol',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 200,
     lowerLimit: 0,
     unit: 'mg/dL',
@@ -345,7 +347,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Ciclosporin A',
     fullName: 'Cyclosporine A',
-    category: Category.getName(ParameterCategory.immunosuppressants),
+    category:
+        ParameterCategoryClass.getName(ParameterCategory.immunosuppressants),
     upperLimit: 200,
     lowerLimit: 50,
     unit: 'ng/mL',
@@ -353,7 +356,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CK-MB',
     fullName: 'Creatine Kinase-MB',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 25,
     lowerLimit: 0,
     unit: 'U/L',
@@ -361,7 +364,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Coeruloplasmin',
     fullName: 'Ceruloplasmin',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 50,
     lowerLimit: 20,
     unit: 'mg/dL',
@@ -369,7 +372,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Cortisol',
     fullName: 'Cortisol',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 20,
     lowerLimit: 5,
     unit: 'µg/dL',
@@ -377,7 +380,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Crosslaps',
     fullName: 'Crosslaps',
-    category: Category.getName(ParameterCategory.bone),
+    category: ParameterCategoryClass.getName(ParameterCategory.bone),
     upperLimit: 0.5,
     lowerLimit: 0,
     unit: 'ng/mL',
@@ -385,7 +388,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'CRP-Wert',
     fullName: 'C-Reactive Protein',
-    category: Category.getName(ParameterCategory.inflammation),
+    category: ParameterCategoryClass.getName(ParameterCategory.inflammation),
     upperLimit: 3,
     lowerLimit: 0,
     unit: 'mg/L',
@@ -393,7 +396,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Cystatin C',
     fullName: 'Cystatin C',
-    category: Category.getName(ParameterCategory.kidney),
+    category: ParameterCategoryClass.getName(ParameterCategory.kidney),
     upperLimit: 1,
     lowerLimit: 0.5,
     unit: 'mg/L',
@@ -403,7 +406,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'D-Dimere',
     fullName: 'D-Dimers',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 0.5,
     lowerLimit: 0,
     unit: 'µg/mL',
@@ -411,7 +414,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'DHEA-S',
     fullName: 'Dehydroepiandrosterone Sulfate',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 400,
     lowerLimit: 100,
     unit: 'µg/dL',
@@ -419,7 +422,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'direktes Bilirubin',
     fullName: 'Direct Bilirubin',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 0.4,
     lowerLimit: 0,
     unit: 'mg/dL',
@@ -429,7 +432,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'EAG – Estimated Average Glucose',
     fullName: 'Estimated Average Glucose',
-    category: Category.getName(ParameterCategory.diabetes),
+    category: ParameterCategoryClass.getName(ParameterCategory.diabetes),
     upperLimit: 120,
     lowerLimit: 80,
     unit: 'mg/dL',
@@ -437,7 +440,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Eisenwert im Blut',
     fullName: 'Iron in Blood',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 150,
     lowerLimit: 30,
     unit: 'µg/dL',
@@ -445,7 +449,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Eosinophile Granulozyten',
     fullName: 'Eosinophil Granulocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 5,
     lowerLimit: 0,
     unit: '%',
@@ -453,7 +457,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Erythrozyten',
     fullName: 'Erythrocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 4.6,
     lowerLimit: 6.2,
     unit: ' /pl',
@@ -463,7 +467,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Faktor 13 Aktivität',
     fullName: 'Factor 13 Activity',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 150,
     lowerLimit: 70,
     unit: '%',
@@ -471,7 +475,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Faktor 8 Aktivität',
     fullName: 'Factor 8 Activity',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 150,
     lowerLimit: 70,
     unit: '%',
@@ -479,7 +483,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Ferritinwert',
     fullName: 'Ferritin',
-    category: Category.getName(ParameterCategory.metabolism),
+    category: ParameterCategoryClass.getName(ParameterCategory.metabolism),
     upperLimit: 400,
     lowerLimit: 30,
     unit: 'ng/mL',
@@ -487,7 +491,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Fibrinogen',
     fullName: 'Fibrinogen',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 400,
     lowerLimit: 200,
     unit: 'mg/dL',
@@ -495,7 +499,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Flüssigkeits-Aufnahme',
     fullName: 'Fluid Intake',
-    category: Category.getName(ParameterCategory.general),
+    category: ParameterCategoryClass.getName(ParameterCategory.general),
     upperLimit: 4000,
     lowerLimit: 1500,
     unit: 'mL',
@@ -503,7 +507,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Folsäure',
     fullName: 'Folic Acid',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 20,
     lowerLimit: 5,
     unit: 'ng/mL',
@@ -511,7 +516,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'FSH-Hormon',
     fullName: 'Follicle-Stimulating Hormone',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 15,
     lowerLimit: 1,
     unit: 'mIU/mL',
@@ -519,7 +524,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'fT3-Wert',
     fullName: 'Free Triiodothyronine',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 4.2,
     lowerLimit: 2.5,
     unit: 'pg/mL',
@@ -527,7 +532,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'fT4-Wert',
     fullName: 'Free Thyroxine',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 1.7,
     lowerLimit: 0.7,
     unit: 'ng/dL',
@@ -537,7 +542,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Gamma-Globuline',
     fullName: 'Gamma Globulins',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 1.5,
     lowerLimit: 0.5,
     unit: 'g/dL',
@@ -545,7 +550,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Gastrin',
     fullName: 'Gastrin',
-    category: Category.getName(ParameterCategory.stomach),
+    category: ParameterCategoryClass.getName(ParameterCategory.stomach),
     upperLimit: 150,
     lowerLimit: 0,
     unit: 'pg/mL',
@@ -553,7 +558,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'GFR Blutwert',
     fullName: 'Glomerular Filtration Rate',
-    category: Category.getName(ParameterCategory.kidney),
+    category: ParameterCategoryClass.getName(ParameterCategory.kidney),
     upperLimit: 120,
     lowerLimit: 90,
     unit: 'ml/min',
@@ -561,7 +566,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'GLDH',
     fullName: 'Glutamate Dehydrogenase',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 40,
     lowerLimit: 5,
     unit: 'U/L',
@@ -569,7 +574,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Glukose – Blutzuckerspiegel',
     fullName: 'Glucose - Blood Sugar Level',
-    category: Category.getName(ParameterCategory.diabetes),
+    category: ParameterCategoryClass.getName(ParameterCategory.diabetes),
     upperLimit: 100,
     lowerLimit: 70,
     unit: 'mg/dL',
@@ -577,7 +582,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'GOT',
     fullName: 'Glutamic Oxaloacetic Transaminase',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 35,
     lowerLimit: 0,
     unit: 'U/L',
@@ -585,7 +590,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'GPT',
     fullName: 'Glutamic Pyruvic Transaminase',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 40,
     lowerLimit: 0,
     unit: 'U/L',
@@ -595,7 +600,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Hämatokrit',
     fullName: 'Hematocrit',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 54,
     lowerLimit: 38,
     unit: '%',
@@ -603,7 +608,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Hämoglobin',
     fullName: 'Hemoglobin',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 17,
     lowerLimit: 12,
     unit: 'g/dL',
@@ -611,7 +616,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Harnsäure',
     fullName: 'Uric Acid',
-    category: Category.getName(ParameterCategory.metabolism),
+    category: ParameterCategoryClass.getName(ParameterCategory.metabolism),
     upperLimit: 7,
     lowerLimit: 2,
     unit: 'mg/dL',
@@ -619,7 +624,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Harnstoff',
     fullName: 'Urea',
-    category: Category.getName(ParameterCategory.kidney),
+    category: ParameterCategoryClass.getName(ParameterCategory.kidney),
     upperLimit: 20,
     lowerLimit: 7,
     unit: 'mg/dL',
@@ -627,7 +632,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'HbA1c Wert',
     fullName: 'Hemoglobin A1c',
-    category: Category.getName(ParameterCategory.diabetes),
+    category: ParameterCategoryClass.getName(ParameterCategory.diabetes),
     upperLimit: 6,
     lowerLimit: 4,
     unit: '%',
@@ -635,7 +640,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'HBV-Infektion',
     fullName: 'Hepatitis B Virus Infection',
-    category: Category.getName(ParameterCategory.infection),
+    category: ParameterCategoryClass.getName(ParameterCategory.infection),
     upperLimit: 0,
     lowerLimit: 0,
     unit: 'positive/negative',
@@ -643,7 +648,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'HCG-Hormon',
     fullName: 'Human Chorionic Gonadotropin Hormone',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 5,
     lowerLimit: 0,
     unit: 'mIU/mL',
@@ -651,7 +656,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'HCV Viruslast',
     fullName: 'Hepatitis C Virus Load',
-    category: Category.getName(ParameterCategory.infection),
+    category: ParameterCategoryClass.getName(ParameterCategory.infection),
     upperLimit: 1000000,
     lowerLimit: 0,
     unit: 'IU/mL',
@@ -659,7 +664,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'HDL Cholesterin',
     fullName: 'High-Density Lipoprotein Cholesterol',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 60,
     lowerLimit: 40,
     unit: 'mg/dL',
@@ -667,7 +672,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'HIV-Viruslast',
     fullName: 'Human Immunodeficiency Virus Load',
-    category: Category.getName(ParameterCategory.infection),
+    category: ParameterCategoryClass.getName(ParameterCategory.infection),
     upperLimit: 500000,
     lowerLimit: 0,
     unit: 'copies/mL',
@@ -675,7 +680,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Homocysteinwert',
     fullName: 'Homocysteine',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 15,
     lowerLimit: 5,
     unit: 'µmol/L',
@@ -685,7 +690,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'IgA',
     fullName: 'Immunoglobulin A',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 400,
     lowerLimit: 70,
     unit: 'mg/dL',
@@ -693,7 +698,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'IgE',
     fullName: 'Immunoglobulin E',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 150,
     lowerLimit: 5,
     unit: 'IU/mL',
@@ -701,7 +706,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'IgG',
     fullName: 'Immunoglobulin G',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 1500,
     lowerLimit: 700,
     unit: 'mg/dL',
@@ -709,7 +714,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'IgM',
     fullName: 'Immunoglobulin M',
-    category: Category.getName(ParameterCategory.immuneSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.immuneSystem),
     upperLimit: 300,
     lowerLimit: 40,
     unit: 'mg/dL',
@@ -717,7 +722,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'indirektes Bilirubin',
     fullName: 'Indirect Bilirubin',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 0.9,
     lowerLimit: 0,
     unit: 'mg/dL',
@@ -725,7 +730,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'INR',
     fullName: 'International Normalized Ratio',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 1.1,
     lowerLimit: 0.9,
     unit: 'ratio',
@@ -733,7 +738,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Insulin',
     fullName: 'Insulin',
-    category: Category.getName(ParameterCategory.pancreas),
+    category: ParameterCategoryClass.getName(ParameterCategory.pancreas),
     upperLimit: 20,
     lowerLimit: 0,
     unit: 'µU/mL',
@@ -743,7 +748,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Kalium',
     fullName: 'Potassium',
-    category: Category.getName(ParameterCategory.electrolytes),
+    category: ParameterCategoryClass.getName(ParameterCategory.electrolytes),
     upperLimit: 5,
     lowerLimit: 3.5,
     unit: 'mmol/L',
@@ -751,7 +756,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Körpergewicht',
     fullName: 'Body Weight',
-    category: Category.getName(ParameterCategory.general),
+    category: ParameterCategoryClass.getName(ParameterCategory.general),
     upperLimit: 200,
     lowerLimit: 50,
     unit: 'kg',
@@ -759,7 +764,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Körpergröße',
     fullName: 'Body Height',
-    category: Category.getName(ParameterCategory.general),
+    category: ParameterCategoryClass.getName(ParameterCategory.general),
     upperLimit: 200,
     lowerLimit: 50,
     unit: 'cm',
@@ -768,7 +773,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'LDH',
     fullName: 'Lactate Dehydrogenase',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 250,
     lowerLimit: 100,
     unit: 'U/L',
@@ -776,7 +781,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'LDL Cholesterin',
     fullName: 'Low-Density Lipoprotein Cholesterol',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 130,
     lowerLimit: 0,
     unit: 'mg/dL',
@@ -784,7 +789,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Leberwerte',
     fullName: 'Liver Values',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 40,
     lowerLimit: 0,
     unit: 'U/L',
@@ -792,7 +797,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Leukozyten',
     fullName: 'Leukocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 11,
     lowerLimit: 4,
     unit: '/µL',
@@ -800,7 +805,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'LH-Hormon',
     fullName: 'Luteinizing Hormone',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 12,
     lowerLimit: 1,
     unit: 'mIU/mL',
@@ -808,7 +813,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Lipase',
     fullName: 'Lipase',
-    category: Category.getName(ParameterCategory.pancreas),
+    category: ParameterCategoryClass.getName(ParameterCategory.pancreas),
     upperLimit: 60,
     lowerLimit: 13,
     unit: 'U/L',
@@ -816,7 +821,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Lipoprotein(a)',
     fullName: 'Lipoprotein(a)',
-    category: Category.getName(ParameterCategory.heart),
+    category: ParameterCategoryClass.getName(ParameterCategory.heart),
     upperLimit: 30,
     lowerLimit: 0,
     unit: 'mg/dL',
@@ -824,7 +829,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Lues – Syphilis',
     fullName: 'Syphilis',
-    category: Category.getName(ParameterCategory.infection),
+    category: ParameterCategoryClass.getName(ParameterCategory.infection),
     upperLimit: 0,
     lowerLimit: 0,
     unit: 'positive/negative',
@@ -832,7 +837,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Lungenfunktion',
     fullName: 'Lung Function',
-    category: Category.getName(ParameterCategory.respiratory),
+    category: ParameterCategoryClass.getName(ParameterCategory.respiratory),
     upperLimit: 120,
     lowerLimit: 80,
     unit: '%',
@@ -842,7 +847,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Magnesium',
     fullName: 'Magnesium',
-    category: Category.getName(ParameterCategory.electrolytes),
+    category: ParameterCategoryClass.getName(ParameterCategory.electrolytes),
     upperLimit: 2.5,
     lowerLimit: 1.7,
     unit: 'mg/dL',
@@ -850,7 +855,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'MCV',
     fullName: 'Mean Corpuscular Volume',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 100,
     lowerLimit: 80,
     unit: 'fL',
@@ -858,7 +863,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'MCH',
     fullName: 'Mean Corpuscular Hemoglobin',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 33,
     lowerLimit: 27,
     unit: 'pg',
@@ -866,7 +871,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'MCHC',
     fullName: 'Mean Corpuscular Hemoglobin Concentration',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 36,
     lowerLimit: 31,
     unit: 'g/dL',
@@ -874,7 +879,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Mikroalbuminurie',
     fullName: 'Microalbuminuria',
-    category: Category.getName(ParameterCategory.kidney),
+    category: ParameterCategoryClass.getName(ParameterCategory.kidney),
     upperLimit: 30,
     lowerLimit: 0,
     unit: 'mg/g',
@@ -882,7 +887,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Monozyten',
     fullName: 'Monocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 12,
     lowerLimit: 4,
     unit: '%',
@@ -892,7 +897,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Natrium',
     fullName: 'Sodium',
-    category: Category.getName(ParameterCategory.electrolytes),
+    category: ParameterCategoryClass.getName(ParameterCategory.electrolytes),
     upperLimit: 145,
     lowerLimit: 135,
     unit: 'mmol/L',
@@ -900,7 +905,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Neutrophile Granulozyten',
     fullName: 'Neutrophil Granulocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 70,
     lowerLimit: 40,
     unit: '%',
@@ -908,7 +913,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Nierenwerte',
     fullName: 'Kidney Values',
-    category: Category.getName(ParameterCategory.kidney),
+    category: ParameterCategoryClass.getName(ParameterCategory.kidney),
     upperLimit: 1.2,
     lowerLimit: 0.7,
     unit: 'mg/dL',
@@ -916,7 +921,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Nitrit im Urin',
     fullName: 'Nitrite in Urine',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 0,
     lowerLimit: 0,
     unit: 'positive/negative',
@@ -926,7 +931,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Östradiol',
     fullName: 'Estradiol',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 50,
     lowerLimit: 0,
     unit: 'pg/mL',
@@ -934,7 +939,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Östron',
     fullName: 'Estrone',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 80,
     lowerLimit: 10,
     unit: 'pg/mL',
@@ -944,7 +949,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'pH-Wert im Urin',
     fullName: 'pH Value in Urine',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 8,
     lowerLimit: 5,
     unit: '',
@@ -952,7 +957,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Phosphat',
     fullName: 'Phosphate',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 4.5,
     lowerLimit: 2.5,
     unit: 'mg/dL',
@@ -960,7 +966,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Phospholipide',
     fullName: 'Phospholipids',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 250,
     lowerLimit: 100,
     unit: 'mg/dL',
@@ -968,7 +974,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Plasminogen-Aktivator-Inhibitor',
     fullName: 'Plasminogen Activator Inhibitor',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 5,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -976,7 +982,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Proinsulin',
     fullName: 'Proinsulin',
-    category: Category.getName(ParameterCategory.pancreas),
+    category: ParameterCategoryClass.getName(ParameterCategory.pancreas),
     upperLimit: 25,
     lowerLimit: 3,
     unit: 'pmol/L',
@@ -984,7 +990,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Protein im Urin',
     fullName: 'Protein in Urine',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 150,
     lowerLimit: 0,
     unit: 'mg/dL',
@@ -992,7 +998,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'PSA-Wert',
     fullName: 'Prostate-Specific Antigen',
-    category: Category.getName(ParameterCategory.cancerMarkers),
+    category: ParameterCategoryClass.getName(ParameterCategory.cancerMarkers),
     upperLimit: 4,
     lowerLimit: 0,
     unit: 'ng/mL',
@@ -1002,7 +1008,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Retikulozyten',
     fullName: 'Reticulocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 1,
     lowerLimit: 0.5,
     unit: '%',
@@ -1012,7 +1018,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Schilddrüsenantikörper',
     fullName: 'Thyroid Antibodies',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 4,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -1020,7 +1026,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Selen im Blut',
     fullName: 'Selenium in Blood',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 150,
     lowerLimit: 70,
     unit: 'µg/L',
@@ -1028,7 +1035,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Serotonin',
     fullName: 'Serotonin',
-    category: Category.getName(ParameterCategory.neurotransmitters),
+    category:
+        ParameterCategoryClass.getName(ParameterCategory.neurotransmitters),
     upperLimit: 400,
     lowerLimit: 150,
     unit: 'ng/mL',
@@ -1036,7 +1044,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'SGLT-2-Inhibitoren',
     fullName: 'SGLT-2 Inhibitors',
-    category: Category.getName(ParameterCategory.diabetes),
+    category: ParameterCategoryClass.getName(ParameterCategory.diabetes),
     upperLimit: 0,
     lowerLimit: 0,
     unit: 'positive/negative',
@@ -1044,7 +1052,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'SHBG',
     fullName: 'Sex Hormone-Binding Globulin',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 120,
     lowerLimit: 20,
     unit: 'nmol/L',
@@ -1052,7 +1060,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Sirolimus',
     fullName: 'Sirolimus',
-    category: Category.getName(ParameterCategory.immunosuppressants),
+    category:
+        ParameterCategoryClass.getName(ParameterCategory.immunosuppressants),
     upperLimit: 10,
     lowerLimit: 2,
     unit: 'ng/mL',
@@ -1060,7 +1069,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Sjögren Syndrom A (SS-A)',
     fullName: 'Sjögren Syndrome A (SS-A)',
-    category: Category.getName(ParameterCategory.autoimmune),
+    category: ParameterCategoryClass.getName(ParameterCategory.autoimmune),
     upperLimit: 20,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -1068,7 +1077,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Sjögren Syndrom B (SS-B)',
     fullName: 'Sjögren Syndrome B (SS-B)',
-    category: Category.getName(ParameterCategory.autoimmune),
+    category: ParameterCategoryClass.getName(ParameterCategory.autoimmune),
     upperLimit: 20,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -1076,7 +1085,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Sorbitol-Dehydrogenase',
     fullName: 'Sorbitol Dehydrogenase',
-    category: Category.getName(ParameterCategory.liver),
+    category: ParameterCategoryClass.getName(ParameterCategory.liver),
     upperLimit: 20,
     lowerLimit: 5,
     unit: 'U/L',
@@ -1084,7 +1093,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Spezifisches Gewicht im Urin',
     fullName: 'Specific Gravity in Urine',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 1.03,
     lowerLimit: 1.01,
     unit: '',
@@ -1092,7 +1101,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Stuhlfett',
     fullName: 'Fecal Fat',
-    category: Category.getName(ParameterCategory.digestiveSystem),
+    category: ParameterCategoryClass.getName(ParameterCategory.digestiveSystem),
     upperLimit: 7,
     lowerLimit: 0,
     unit: 'g/d',
@@ -1100,7 +1109,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Summe Eosinophile Granulozyten',
     fullName: 'Total Eosinophil Granulocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 6,
     lowerLimit: 0,
     unit: '%',
@@ -1108,7 +1117,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Summe Monozyten',
     fullName: 'Total Monocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 12,
     lowerLimit: 0,
     unit: '%',
@@ -1116,7 +1125,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Summe Neutrophile Granulozyten',
     fullName: 'Total Neutrophil Granulocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 70,
     lowerLimit: 40,
     unit: '%',
@@ -1124,7 +1133,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Summe Lymphozyten',
     fullName: 'Total Lymphocytes',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 40,
     lowerLimit: 20,
     unit: '%',
@@ -1132,7 +1141,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Synacthen Test',
     fullName: 'Synacthen Test',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 200,
     lowerLimit: 0,
     unit: 'pg/mL',
@@ -1142,7 +1151,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'T3-Wert',
     fullName: 'Triiodothyronine',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 181,
     lowerLimit: 71,
     unit: 'ng/dL',
@@ -1150,7 +1159,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'T3 freies Hormon',
     fullName: 'Free Triiodothyronine',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 4.2,
     lowerLimit: 2.5,
     unit: 'pg/mL',
@@ -1158,7 +1167,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'T4 freies Hormon',
     fullName: 'Free Thyroxine',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 1.7,
     lowerLimit: 0.7,
     unit: 'ng/dL',
@@ -1166,7 +1175,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Testosteron',
     fullName: 'Testosterone',
-    category: Category.getName(ParameterCategory.hormones),
+    category: ParameterCategoryClass.getName(ParameterCategory.hormones),
     upperLimit: 10,
     lowerLimit: 2,
     unit: 'ng/mL',
@@ -1174,7 +1183,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Thrombinzeit',
     fullName: 'Thrombin Time',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 20,
     lowerLimit: 13,
     unit: 's',
@@ -1182,7 +1191,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Thrombozyten',
     fullName: 'Platelets (Thrombocytes)',
-    category: Category.getName(ParameterCategory.blood),
+    category: ParameterCategoryClass.getName(ParameterCategory.blood),
     upperLimit: 400,
     lowerLimit: 150,
     unit: '/µL',
@@ -1190,7 +1199,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Thyreoglobulin',
     fullName: 'Thyroglobulin',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 60,
     lowerLimit: 0,
     unit: 'ng/mL',
@@ -1198,7 +1207,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Thyreoperoxidase-Antikörper (TPO-AK)',
     fullName: 'Thyroid Peroxidase Antibodies',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 35,
     lowerLimit: 0,
     unit: 'U/mL',
@@ -1206,7 +1215,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Thyreotropin Rezeptor Antikörper (TRAK)',
     fullName: 'Thyrotropin Receptor Antibodies',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 1.5,
     lowerLimit: 0,
     unit: 'U/L',
@@ -1214,7 +1223,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Transferrin',
     fullName: 'Transferrin',
-    category: Category.getName(ParameterCategory.metabolism),
+    category: ParameterCategoryClass.getName(ParameterCategory.metabolism),
     upperLimit: 360,
     lowerLimit: 200,
     unit: 'mg/dL',
@@ -1222,7 +1231,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'TSH-Hormon',
     fullName: 'Thyroid Stimulating Hormone',
-    category: Category.getName(ParameterCategory.thyroid),
+    category: ParameterCategoryClass.getName(ParameterCategory.thyroid),
     upperLimit: 4,
     lowerLimit: 0.3,
     unit: 'µIU/mL',
@@ -1232,7 +1241,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Urate',
     fullName: 'Urate',
-    category: Category.getName(ParameterCategory.metabolism),
+    category: ParameterCategoryClass.getName(ParameterCategory.metabolism),
     upperLimit: 7,
     lowerLimit: 2,
     unit: 'mg/dL',
@@ -1240,7 +1249,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Urea im Urin',
     fullName: 'Urea in Urine',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 20,
     lowerLimit: 10,
     unit: 'g/dL',
@@ -1248,7 +1257,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Urobilinogen im Urin',
     fullName: 'Urobilinogen in Urine',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 1,
     lowerLimit: 0,
     unit: 'mg/dL',
@@ -1256,7 +1265,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Urin Kreatinin',
     fullName: 'Urine Creatinine',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 2500,
     lowerLimit: 500,
     unit: 'mg/dL',
@@ -1264,7 +1273,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Urin pH-Wert',
     fullName: 'Urine pH Value',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 8,
     lowerLimit: 5,
     unit: '',
@@ -1272,7 +1281,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Urin-Protein-Kreatinin-Quotient',
     fullName: 'Urine Protein-to-Creatinine Ratio',
-    category: Category.getName(ParameterCategory.urinary),
+    category: ParameterCategoryClass.getName(ParameterCategory.urinary),
     upperLimit: 200,
     lowerLimit: 0,
     unit: 'mg/g',
@@ -1282,7 +1291,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin A',
     fullName: 'Vitamin A',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 80,
     lowerLimit: 20,
     unit: 'µg/dL',
@@ -1290,7 +1300,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin B1',
     fullName: 'Vitamin B1',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 1.5,
     lowerLimit: 0.2,
     unit: 'µg/L',
@@ -1298,7 +1309,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin B12',
     fullName: 'Vitamin B12',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 900,
     lowerLimit: 200,
     unit: 'pg/mL',
@@ -1306,7 +1318,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin B2',
     fullName: 'Vitamin B2',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 7,
     lowerLimit: 2,
     unit: 'µg/L',
@@ -1314,7 +1327,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin B6',
     fullName: 'Vitamin B6',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 50,
     lowerLimit: 5,
     unit: 'µg/L',
@@ -1322,7 +1336,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin C',
     fullName: 'Vitamin C',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 2,
     lowerLimit: 0.2,
     unit: 'mg/L',
@@ -1330,7 +1345,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin D (25-OH)',
     fullName: 'Vitamin D (25-Hydroxy)',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 50,
     lowerLimit: 30,
     unit: 'ng/mL',
@@ -1338,7 +1354,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin E',
     fullName: 'Vitamin E',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 18,
     lowerLimit: 5,
     unit: 'µg/L',
@@ -1346,7 +1363,8 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin K',
     fullName: 'Vitamin K',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 2.5,
     lowerLimit: 0.2,
     unit: 'ng/mL',
@@ -1356,7 +1374,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Weizen-Antikörper',
     fullName: 'Wheat Antibodies',
-    category: Category.getName(ParameterCategory.allergies),
+    category: ParameterCategoryClass.getName(ParameterCategory.allergies),
     upperLimit: 0,
     lowerLimit: 0,
     unit: 'positive/negative',
@@ -1366,9 +1384,200 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Zink',
     fullName: 'Zinc',
-    category: Category.getName(ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(
+        ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 150,
     lowerLimit: 60,
     unit: 'µg/dL',
+  ),
+];
+
+List<MedicationComponent> componentsInitial = [
+  MedicationComponent(
+    name: 'Testosterone',
+    fullName: 'Testo',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Enanthate',
+    typeToHalfLife: {'Enanthate': 4.5, 'Cypionate': 4.5, 'Propionate': 1.5},
+  ),
+  // Medication Component deca
+  MedicationComponent(
+    name: 'Deca',
+    fullName: 'Deca',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Decanoate',
+    typeToHalfLife: {'Decanoate': 15},
+  ),
+
+  // Medication Component tren
+  MedicationComponent(
+    name: 'Trenbolone',
+    fullName: 'Tren',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Enanthate',
+    typeToHalfLife: {'Enanthate': 5, 'Acetate': 2},
+  ),
+
+  // Medication Component boldenone
+  MedicationComponent(
+    name: 'Boldenone',
+    fullName: 'Bold',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Undecylenate',
+    typeToHalfLife: {'Undecylenate': 14},
+  ),
+
+  // Medication Component masteron
+  MedicationComponent(
+    name: 'Masteron',
+    fullName: 'Masteron',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Propionate',
+    typeToHalfLife: {'Propionate': 1.5},
+  ),
+
+  // Medication Component primobolan
+  MedicationComponent(
+    name: 'Primobolan',
+    fullName: 'Primo',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Enanthate',
+    typeToHalfLife: {'Enanthate': 10},
+  ),
+
+  // Medication Component anavar
+  MedicationComponent(
+    name: 'Anavar',
+    fullName: 'Anavar',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Oxandrolone',
+    typeToHalfLife: {'Oxandrolone': 9},
+  ),
+
+  // Medication Component winstrol
+  MedicationComponent(
+    name: 'Winstrol',
+    fullName: 'Winstrol',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Stanozolol',
+    typeToHalfLife: {'Stanozolol': 9},
+  ),
+
+  // Medication Component dianabol
+  MedicationComponent(
+    name: 'Dianabol',
+    fullName: 'Dianabol',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Methandienone',
+    typeToHalfLife: {'Methandienone': 4.5},
+  ),
+
+  // Medication Component anadrol
+  MedicationComponent(
+    name: 'Anadrol',
+    fullName: 'Anadrol',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Oxymetholone',
+    typeToHalfLife: {'Oxymetholone': 9},
+  ),
+
+  // Medication Component proviron
+  MedicationComponent(
+    name: 'Proviron',
+    fullName: 'Proviron',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'mg',
+    type: 'Mesterolone',
+    typeToHalfLife: {'Mesterolone': 12},
+  ),
+
+  // Medication Component arimidex
+
+  MedicationComponent(
+    name: 'Arimidex',
+    fullName: 'Arimidex',
+    category:
+        ComponentCategoryClass.getName(ComponentCategory.aromataseInhibitor),
+    unit: 'mg',
+    type: 'Anastrozole',
+    typeToHalfLife: {'Anastrozole': 2},
+  ),
+
+  // Medication Component aromasin
+
+  MedicationComponent(
+    name: 'Aromasin',
+    fullName: 'Aromasin',
+    category:
+        ComponentCategoryClass.getName(ComponentCategory.aromataseInhibitor),
+    unit: 'mg',
+    type: 'Exemestane',
+    typeToHalfLife: {'Exemestane': 1.5},
+  ),
+
+  // Medication Component nolvadex
+
+  MedicationComponent(
+    name: 'Nolvadex',
+    fullName: 'Nolvadex',
+    category: ComponentCategoryClass.getName(ComponentCategory.pct),
+    unit: 'mg',
+    type: 'Tamoxifen',
+    typeToHalfLife: {'Tamoxifen': 5},
+  ),
+
+  // Medication Component clomid
+
+  MedicationComponent(
+    name: 'Clomid',
+    fullName: 'Clomid',
+    category: ComponentCategoryClass.getName(ComponentCategory.pct),
+    unit: 'mg',
+    type: 'Clomiphene',
+    typeToHalfLife: {'Clomiphene': 5},
+  ),
+
+  // Medication Component hcg
+
+  MedicationComponent(
+    name: 'HCG',
+    fullName: 'HCG',
+    category: ComponentCategoryClass.getName(ComponentCategory.pct),
+    unit: 'IU',
+    type: 'HCG',
+    typeToHalfLife: {'HCG': 1},
+  ),
+
+  // Medication Component hgh
+
+  MedicationComponent(
+    name: 'HGH',
+    fullName: 'HGH',
+    category: ComponentCategoryClass.getName(
+        ComponentCategory.hormoneReplacementTherapy),
+    unit: 'IU',
+    type: 'HGH',
+    typeToHalfLife: {'HGH': 1},
   ),
 ];

@@ -26,7 +26,7 @@ enum ParameterCategory {
   allergies
 }
 
-class Category {
+class ParameterCategoryClass {
   static const Map<ParameterCategory, String> names = {
     ParameterCategory.heart: 'Cardiovascular System',
     ParameterCategory.blood: 'Blood',

@@ -19,6 +19,8 @@ dependencies:
   flutter_svg: ^2.0.9
   material_symbols_icons: ^4.2713.0
   path_provider: ^2.1.1
+  sembast: ^3.5.0+1
+  numberpicker: ^2.1.2
 
 dev_dependencies:
   flutter_test:

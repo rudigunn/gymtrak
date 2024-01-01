@@ -12,7 +12,9 @@ class BottomSheetWidget extends StatefulWidget {
   final List<String> folders;
   final BloodWorkResult? existingResult;
 
-  const BottomSheetWidget({Key? key, required this.folders, this.existingResult}) : super(key: key);
+  const BottomSheetWidget(
+      {Key? key, required this.folders, this.existingResult})
+      : super(key: key);
 
   @override
   _BottomSheetWidgetState createState() => _BottomSheetWidgetState();
@@ -64,9 +66,14 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
           children: [
             _buildSeparator(),
             const SizedBox(height: 5),
-            _buildTextField('Test Name', 'Enter a name for this test', hintText: testName, onChanged: (value) {
-              testName = value;
-            }),
+            _buildTextField(
+              'Test Name',
+              'Enter a name for this test',
+              hintText: testName,
+              onChanged: (value) {
+                testName = value;
+              },
+            ),
             const SizedBox(height: 20),
             _buildFolderDropdown(),
             const SizedBox(height: 20),
@@ -179,7 +186,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
       padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: categories.map((category) => _buildFilterChip(category)).toList(),
+        children:
+            categories.map((category) => _buildFilterChip(category)).toList(),
       ),
     );
   }
@@ -225,7 +233,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
     String searchTerm = searchController.text.toLowerCase();
 
     return parameters.values.where((parameter) {
-      return (selectedCategories.isEmpty || selectedCategories.contains(parameter.category)) &&
+      return (selectedCategories.isEmpty ||
+              selectedCategories.contains(parameter.category)) &&
           (searchTerm.isEmpty ||
               parameter.name.toLowerCase().startsWith(searchTerm) ||
               parameter.fullName.toLowerCase().startsWith(searchTerm));
@@ -285,8 +294,10 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             children: [
               TextField(
                 controller: textEditingController,
-                decoration: InputDecoration(labelText: 'Enter Value', suffixText: parameter.unit),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(
+                    labelText: 'Enter Value', suffixText: parameter.unit),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [LengthLimitingTextInputFormatter(15)],
               ),
             ],
@@ -298,7 +309,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             ),
             TextButton(
               onPressed: () async {
-                String inputValue = textEditingController.text.replaceAll(',', '.');
+                String inputValue =
+                    textEditingController.text.replaceAll(',', '.');
                 try {
                   double convertedValue = double.parse(inputValue);
                   Navigator.pop(context, convertedValue);
@@ -339,13 +351,15 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   }
 
   Future<void> _loadParameters() async {
-    Map<int, BloodWorkParameter> loadedParameters = await GeneralDatabase.instance.readAllBloodWorkParameters();
+    Map<int, BloodWorkParameter> loadedParameters =
+        await GeneralDatabase.instance.readAllBloodWorkParameters();
 
     if (loadedParameters.isEmpty) {
       for (BloodWorkParameter parameter in parametersInitial) {
         await GeneralDatabase.instance.createBloodWorkParameter(parameter);
       }
-      loadedParameters = await GeneralDatabase.instance.readAllBloodWorkParameters();
+      loadedParameters =
+          await GeneralDatabase.instance.readAllBloodWorkParameters();
     }
 
     setState(() {
