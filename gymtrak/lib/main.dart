@@ -1,10 +1,18 @@
 import 'package:gymtrak/home.dart';
 import 'package:flutter/material.dart';
-import 'package:gymtrak/utilities/misc/notification_service.dart' as localNotificationService;
+import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await localNotificationService.setup();
+  final PermissionStatus status = await Permission.notification.request();
+  if (status.isGranted) {
+    // Notification permissions granted
+  } else if (status.isDenied) {
+    // Notification permissions denied
+  } else if (status.isPermanentlyDenied) {
+    // Notification permissions permanently denied, open app settings
+    await openAppSettings();
+  }
   runApp(const MainApp());
 }
 

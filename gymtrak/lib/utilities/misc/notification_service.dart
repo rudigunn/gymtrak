@@ -1,23 +1,55 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 
-final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+class NotificationService {
+  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-Future<void> setup() async {
-  const androidInitializationSetting = AndroidInitializationSettings('@mipmap/ic_launcher');
-  const iosInitializationSetting = DarwinInitializationSettings();
-  const initSettings = InitializationSettings(android: androidInitializationSetting, iOS: iosInitializationSetting);
-  await _flutterLocalNotificationsPlugin.initialize(initSettings);
-}
+  Future<void> initNotification() async {
+    AndroidInitializationSettings initializationSettingsAndroid =
+        const AndroidInitializationSettings('mipmap/ic_launcher');
 
-void showLocalNotification(String title, String body) {
-  const androidNotificationDetail = AndroidNotificationDetails(
-    '0',
-    'GymTrak',
-  );
-  const iosNotificatonDetail = DarwinNotificationDetails();
-  const notificationDetails = NotificationDetails(
-    iOS: iosNotificatonDetail,
-    android: androidNotificationDetail,
-  );
-  _flutterLocalNotificationsPlugin.show(0, title, body, notificationDetails);
+    var initializationSettingsIOS = DarwinInitializationSettings(
+        requestAlertPermission: true,
+        requestBadgePermission: true,
+        requestSoundPermission: true,
+        onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {});
+
+    var initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    await notificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {});
+  }
+
+  notificationDetails() {
+    return const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'channelId',
+          'channelName',
+          importance: Importance.max,
+          playSound: true,
+        ),
+        iOS: DarwinNotificationDetails());
+  }
+
+  Future showNotification({int id = 0, String? title, String? body, String? payLoad}) async {
+    return notificationsPlugin.show(id, title, body, await notificationDetails());
+  }
+
+  Future scheduleNotification(
+      {int id = 0,
+      String? title,
+      String? body,
+      String? payLoad,
+      required DateTime scheduledNotificationDateTime}) async {
+    return notificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tz.TZDateTime.from(
+          scheduledNotificationDateTime,
+          tz.local,
+        ),
+        await notificationDetails(),
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
+  }
 }

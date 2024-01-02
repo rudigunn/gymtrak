@@ -4,8 +4,8 @@ import 'package:gymtrak/utilities/medication/medication_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/databases/general_database.dart';
 import 'package:gymtrak/utilities/databases/medication_database.dart';
+import 'package:gymtrak/utilities/misc/notification_service.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:gymtrak/utilities/misc/notification_service.dart' as localNotificationService;
 
 class UserMedicationPage extends StatefulWidget {
   const UserMedicationPage({super.key});
@@ -40,12 +40,14 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
           children: [
             ElevatedButton(
               onPressed: () {
-                localNotificationService.showLocalNotification(
-                  'Yay you did it!',
-                  'Congrats on your first local notification',
+                var notificationService = NotificationService();
+                notificationService.initNotification();
+                notificationService.showNotification(
+                  title: 'Yay you did it!',
+                  body: 'Congrats on your first local notification',
                 );
               },
-              child: Text('Test Notification'),
+              child: const Text('Test Notification'),
             ),
             Container(
               alignment: Alignment.centerLeft,
@@ -361,7 +363,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                     ),
                     Text(plan.active ? 'Active' : 'Inactive',
                         style: TextStyle(
-                            fontSize: 14, color: plan.active ? Color.fromARGB(255, 112, 186, 115) : Colors.grey)),
+                            fontSize: 14, color: plan.active ? const Color.fromARGB(255, 112, 186, 115) : Colors.grey)),
                     Expanded(
                       child: ListView.builder(
                         itemCount:
