@@ -1,4 +1,5 @@
 import 'package:gymtrak/utilities/medication/medication_bottom_sheet.dart';
+import 'package:gymtrak/utilities/medication/medication_component_plan.dart';
 import 'package:gymtrak/utilities/medication/medication_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/databases/general_database.dart';
@@ -15,6 +16,8 @@ class UserMedicationPage extends StatefulWidget {
 class _UserMedicationPageState extends State<UserMedicationPage> {
   Map<int, String> folders = {};
   List<MedicationPlan> plans = [];
+
+  GlobalKey<MedicationBottomSheetWidgetState> medicationBottomSheetKey = GlobalKey();
 
   final TextEditingController _folderNameController = TextEditingController();
 
@@ -51,8 +54,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                      textStyle:
-                          const TextStyle(fontSize: 15, color: Colors.white),
+                      textStyle: const TextStyle(fontSize: 15, color: Colors.white),
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(75, 45),
@@ -83,8 +85,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                       Theme(
                         data: ThemeData(splashFactory: NoSplash.splashFactory),
                         child: IconButton(
-                          icon: const Icon(Icons.create_new_folder,
-                              color: Colors.black87),
+                          icon: const Icon(Icons.create_new_folder, color: Colors.black87),
                           onPressed: () async {
                             _addNewFolder();
                           },
@@ -115,13 +116,11 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   }
 
   void loadFolders() async {
-    Map<int, String> data = await GeneralDatabase.instance
-        .readAllFolders(GeneralDatabase.tableMedicationFolders);
+    Map<int, String> data = await GeneralDatabase.instance.readAllFolders(GeneralDatabase.tableMedicationFolders);
 
     if (data.isEmpty) {
       data = {
-        await GeneralDatabase.instance.createFolder(
-                'My Medications', GeneralDatabase.tableMedicationFolders):
+        await GeneralDatabase.instance.createFolder('My Medications', GeneralDatabase.tableMedicationFolders):
             'My Medications'
       };
     }
@@ -130,21 +129,15 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     });
   }
 
-  void _showAddMedicationPlanSheet(
-      BuildContext context, MedicationPlan? existingPlan) {
-    showModalBottomSheet<MedicationPlan>(
+  void _showAddMedicationPlanSheet(BuildContext context, MedicationPlan? existingPlan) async {
+    MedicationPlan? medicationPlan = await showModalBottomSheet<MedicationPlan>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        // return MedicationBottomSheetWidget(
-        //   folders: folders.values.toList(),
-        //   existingPlan: existingPlan,
-        // );
         return FractionallySizedBox(
-          heightFactor: 0.9, // Adjust the height as needed
+          heightFactor: 0.9,
           child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(30)), // Rounded top edge
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             child: Scaffold(
               appBar: AppBar(
                 title: Center(
@@ -162,12 +155,51 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                   IconButton(
                     icon: const Icon(Icons.check),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      MedicationBottomSheetWidgetState? state = medicationBottomSheetKey.currentState;
+
+                      if (state != null) {
+                        if (medicationBottomSheetKey.currentState!.planName.isEmpty) {
+                          _showErrorDialog(context, 'Medication plan name cannot be empty');
+                          return;
+                        }
+
+                        if (medicationBottomSheetKey.currentState!.selectedFolder == 'Select a folder') {
+                          _showErrorDialog(context, 'Medication plan folder cannot be empty');
+                          return;
+                        }
+
+                        DateTime now = DateTime.now();
+
+                        if (state.planStartDate.year == now.year &&
+                            state.planStartDate.month == now.month &&
+                            state.planStartDate.day == now.day) {
+                          _showErrorDialog(context, 'Medication plan start date cannot be empty');
+                          return;
+                        }
+
+                        List<MedicationComponentPlan> componentPlans = state.componentPlans;
+                        if (componentPlans.isNotEmpty) {
+                          MedicationPlan medicationPlan = MedicationPlan(
+                            id: state.planId,
+                            name: state.planName,
+                            folder: state.selectedFolder,
+                            active: true,
+                            medicationComponentPlans: componentPlans,
+                            description: '',
+                          );
+                          Navigator.of(context).pop(medicationPlan);
+                        } else {
+                          _showErrorDialog(context,
+                              'Medication plan cannot be empty. Please add at least one medication component.');
+                          return;
+                        }
+                      }
                     },
                   ),
                 ],
               ),
               body: MedicationBottomSheetWidget(
+                key: medicationBottomSheetKey,
                 folders: folders.values.toList(),
                 existingPlan: existingPlan,
               ),
@@ -175,28 +207,28 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
           ),
         );
       },
-    ).then((MedicationPlan? plan) async {
-      if (plan != null) {
-        debugPrint('Received MedicationPlan: ${plan.toString()}');
-        if (plan.id == null) {
-          plan.id = await MedicationDatabaseHelper.instance
-              .insertMedicationPlan(plan);
-        } else {
-          await MedicationDatabaseHelper.instance.updateMedicationPlan(plan);
-        }
-
-        if (plan.id != 0) {
-          setState(() {
-            if (plans.any((element) => element.id == plan.id)) {
-              plans[plans.indexWhere((element) => element.id == plan.id)] =
-                  plan;
-            } else {
-              plans.add(plan);
-            }
-          });
-        }
+    );
+    if (medicationPlan != null) {
+      debugPrint('Received MedicationPlan: ${medicationPlan.toMap()}');
+      if (medicationPlan.id == null) {
+        medicationPlan.id = await MedicationDatabaseHelper.instance.insertMedicationPlan(medicationPlan);
+      } else {
+        await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
       }
-    });
+
+      if (medicationPlan.id != 0) {
+        setState(() {
+          if (plans.any((element) => element.id == medicationPlan.id)) {
+            plans[plans.indexWhere((element) => element.id == medicationPlan.id)] = medicationPlan;
+          } else {
+            plans.add(medicationPlan);
+          }
+        });
+
+        debugPrint('MedicationPlan saved to database');
+        debugPrint(plans.toString());
+      }
+    }
   }
 
   void _addNewFolder() {
@@ -211,12 +243,10 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             decoration: const InputDecoration(
               hintText: "Enter folder name",
               enabledBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Color.fromARGB(255, 172, 172, 172)),
+                borderSide: BorderSide(color: Color.fromARGB(255, 172, 172, 172)),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Color.fromARGB(255, 114, 114, 114)),
+                borderSide: BorderSide(color: Color.fromARGB(255, 114, 114, 114)),
               ),
             ),
           ),
@@ -239,9 +269,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
               onPressed: () async {
                 if (_folderNameController.text.isNotEmpty) {
                   Navigator.of(context).pop();
-                  int i = await GeneralDatabase.instance.createFolder(
-                      _folderNameController.text,
-                      GeneralDatabase.tableMedicationFolders);
+                  int i = await GeneralDatabase.instance
+                      .createFolder(_folderNameController.text, GeneralDatabase.tableMedicationFolders);
                   setState(() {
                     if (i != 0) {
                       folders[i] = _folderNameController.text;
@@ -261,8 +290,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     return folders.entries.toList().map((entry) {
       String folder = entry.value;
       int folderId = entry.key;
-      List<MedicationPlan> filteredPlans =
-          plans.where((plan) => plan.folder == folder).toList();
+      List<MedicationPlan> filteredPlans = plans.where((plan) => plan.folder == folder).toList();
 
       return Theme(
         data: ThemeData(dividerColor: Colors.black26),
@@ -275,6 +303,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
           trailing: _buildPopupMenuButton(context, folderId),
           children: [
             _buildPlanBlocks(filteredPlans),
+            const SizedBox(height: 20),
           ],
         ),
       );
@@ -289,52 +318,128 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
         crossAxisCount: 2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
+        childAspectRatio: 1,
       ),
       itemCount: filteredPlans.length,
       itemBuilder: (context, index) {
         MedicationPlan plan = filteredPlans[index];
-        //DateFormat format = DateFormat('dd/MM/yyyy HH:mm');
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          padding: const EdgeInsets.all(8.0),
           child: Card(
-            child: Dismissible(
-              key: Key(plan.id.toString()),
-              background: Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.only(left: 10.0),
-                color: Colors.red,
-                child: const Icon(
-                  Icons.delete,
-                  color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            elevation: 1,
+            child: InkWell(
+              onTap: () => _showAddMedicationPlanSheet(context, plan),
+              borderRadius: BorderRadius.circular(10),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(plan.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        ),
+                        _buildPlanPopupMenuButton(plan, index),
+                      ],
+                    ),
+                    Text(plan.active ? 'Active' : 'Inactive',
+                        style: TextStyle(
+                            fontSize: 14, color: plan.active ? Color.fromARGB(255, 112, 186, 115) : Colors.grey)),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount:
+                            plan.medicationComponentPlans.length > 3 ? 3 + 1 : plan.medicationComponentPlans.length,
+                        itemBuilder: (context, componentIndex) {
+                          if (componentIndex >= 3) {
+                            return const Text("...", style: TextStyle(fontSize: 14));
+                          }
+                          MedicationComponentPlan componentPlan = plan.medicationComponentPlans[componentIndex];
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  '${componentPlan.medicationComponent.name} ${componentPlan.dosage} ${componentPlan.medicationComponent.unit}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              direction: DismissDirection.endToStart,
-              onDismissed: (direction) async {
-                await MedicationDatabaseHelper.instance
-                    .deleteMedicationPlanWithId(plan.id!);
-                setState(() {
-                  plans.remove(plan);
-                });
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(plan.name),
-                  Text(plan.description),
-                  IconButton(
-                    icon: const Icon(Symbols.arrow_right),
-                    color: Colors.black,
-                    onPressed: () {
-                      _showAddMedicationPlanSheet(context, plan);
-                    },
-                  ),
-                ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPlanPopupMenuButton(MedicationPlan plan, int index) {
+    return Theme(
+      data: ThemeData(splashFactory: NoSplash.splashFactory),
+      child: PopupMenuButton(
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: 1,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(plan.active ? 'Set plan to inactive' : 'Set plan to active'),
+            ),
+            onTap: () {
+              setState(() {
+                plan.active = !plan.active;
+                MedicationDatabaseHelper.instance.updateMedicationPlan(plan);
+              });
+            },
+          ),
+          PopupMenuItem(
+            value: 2,
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text('Delete Plan'),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Delete Plan'),
+                    content: const Text('Are you sure you want to delete this plan?'),
+                    actions: <Widget>[
+                      _buildDialogButton(
+                        text: 'Cancel',
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      _buildDialogButton(
+                        text: 'Delete',
+                        onPressed: () {
+                          setState(() {
+                            Navigator.pop(context);
+                            plans.removeAt(index);
+                            MedicationDatabaseHelper.instance.deleteMedicationPlanWithId(plan.id!);
+                          });
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -393,8 +498,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             ),
             _buildDialogButton(
               text: 'Save',
-              onPressed: () =>
-                  _handleRenameSave(renameController.text, folderId),
+              onPressed: () => _handleRenameSave(renameController.text, folderId),
             ),
           ],
         );
@@ -410,8 +514,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
     Navigator.of(context).pop();
 
-    int i = await GeneralDatabase.instance.updateFolder(
-        folderId, newName, GeneralDatabase.tableMedicationFolders);
+    int i = await GeneralDatabase.instance.updateFolder(folderId, newName, GeneralDatabase.tableMedicationFolders);
     if (i != 0) {
       List<MedicationPlan> updatedPlans = [];
       for (var plan in plans) {
@@ -453,8 +556,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
   void _handleDelete(int folderId) async {
     Navigator.of(context).pop();
-    int deletionCount = await GeneralDatabase.instance
-        .deleteFolder(folderId, GeneralDatabase.tableMedicationFolders);
+    int deletionCount = await GeneralDatabase.instance.deleteFolder(folderId, GeneralDatabase.tableMedicationFolders);
     if (deletionCount != 0) {
       List<MedicationPlan> remainingPlans = [];
 
@@ -491,8 +593,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     );
   }
 
-  Widget _buildDialogButton(
-      {required String text, required void Function()? onPressed}) {
+  Widget _buildDialogButton({required String text, required void Function()? onPressed}) {
     return TextButton(
       onPressed: onPressed,
       child: Text(text),

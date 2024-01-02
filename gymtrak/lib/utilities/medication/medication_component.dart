@@ -4,7 +4,6 @@ class MedicationComponent {
   String fullName;
   String category;
   String unit;
-  String type;
   Map<String, double> typeToHalfLife = {};
 
   MedicationComponent({
@@ -13,7 +12,6 @@ class MedicationComponent {
     required this.fullName,
     required this.category,
     required this.unit,
-    required this.type,
     required this.typeToHalfLife,
   });
 
@@ -23,7 +21,6 @@ class MedicationComponent {
       'fullName': fullName,
       'category': category,
       'unit': unit,
-      'type': type,
       'typeToHalfLife': typeToHalfLife,
     };
   }
@@ -34,7 +31,6 @@ class MedicationComponent {
       fullName: map['fullName'],
       category: map['category'],
       unit: map['unit'],
-      type: map['type'],
       typeToHalfLife: map['typeToHalfLife'].cast<String, double>(),
     );
   }

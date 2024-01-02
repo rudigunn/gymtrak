@@ -347,8 +347,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Ciclosporin A',
     fullName: 'Cyclosporine A',
-    category:
-        ParameterCategoryClass.getName(ParameterCategory.immunosuppressants),
+    category: ParameterCategoryClass.getName(ParameterCategory.immunosuppressants),
     upperLimit: 200,
     lowerLimit: 50,
     unit: 'ng/mL',
@@ -440,8 +439,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Eisenwert im Blut',
     fullName: 'Iron in Blood',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 150,
     lowerLimit: 30,
     unit: 'µg/dL',
@@ -507,8 +505,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Folsäure',
     fullName: 'Folic Acid',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 20,
     lowerLimit: 5,
     unit: 'ng/mL',
@@ -957,8 +954,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Phosphat',
     fullName: 'Phosphate',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 4.5,
     lowerLimit: 2.5,
     unit: 'mg/dL',
@@ -1026,8 +1022,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Selen im Blut',
     fullName: 'Selenium in Blood',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 150,
     lowerLimit: 70,
     unit: 'µg/L',
@@ -1035,8 +1030,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Serotonin',
     fullName: 'Serotonin',
-    category:
-        ParameterCategoryClass.getName(ParameterCategory.neurotransmitters),
+    category: ParameterCategoryClass.getName(ParameterCategory.neurotransmitters),
     upperLimit: 400,
     lowerLimit: 150,
     unit: 'ng/mL',
@@ -1060,8 +1054,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Sirolimus',
     fullName: 'Sirolimus',
-    category:
-        ParameterCategoryClass.getName(ParameterCategory.immunosuppressants),
+    category: ParameterCategoryClass.getName(ParameterCategory.immunosuppressants),
     upperLimit: 10,
     lowerLimit: 2,
     unit: 'ng/mL',
@@ -1291,8 +1284,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin A',
     fullName: 'Vitamin A',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 80,
     lowerLimit: 20,
     unit: 'µg/dL',
@@ -1300,8 +1292,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin B1',
     fullName: 'Vitamin B1',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 1.5,
     lowerLimit: 0.2,
     unit: 'µg/L',
@@ -1309,8 +1300,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin B12',
     fullName: 'Vitamin B12',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 900,
     lowerLimit: 200,
     unit: 'pg/mL',
@@ -1318,8 +1308,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin B2',
     fullName: 'Vitamin B2',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 7,
     lowerLimit: 2,
     unit: 'µg/L',
@@ -1327,8 +1316,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin B6',
     fullName: 'Vitamin B6',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 50,
     lowerLimit: 5,
     unit: 'µg/L',
@@ -1336,8 +1324,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin C',
     fullName: 'Vitamin C',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 2,
     lowerLimit: 0.2,
     unit: 'mg/L',
@@ -1345,8 +1332,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin D (25-OH)',
     fullName: 'Vitamin D (25-Hydroxy)',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 50,
     lowerLimit: 30,
     unit: 'ng/mL',
@@ -1354,8 +1340,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin E',
     fullName: 'Vitamin E',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 18,
     lowerLimit: 5,
     unit: 'µg/L',
@@ -1363,8 +1348,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Vitamin K',
     fullName: 'Vitamin K',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 2.5,
     lowerLimit: 0.2,
     unit: 'ng/mL',
@@ -1384,8 +1368,7 @@ List<BloodWorkParameter> parametersInitial = [
   BloodWorkParameter(
     name: 'Zink',
     fullName: 'Zinc',
-    category: ParameterCategoryClass.getName(
-        ParameterCategory.vitaminesAndTraceElements),
+    category: ParameterCategoryClass.getName(ParameterCategory.vitaminesAndTraceElements),
     upperLimit: 150,
     lowerLimit: 60,
     unit: 'µg/dL',
@@ -1396,20 +1379,16 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Testosterone',
     fullName: 'Testo',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Enanthate',
     typeToHalfLife: {'Enanthate': 4.5, 'Cypionate': 4.5, 'Propionate': 1.5},
   ),
   // Medication Component deca
   MedicationComponent(
     name: 'Deca',
     fullName: 'Deca',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Decanoate',
     typeToHalfLife: {'Decanoate': 15},
   ),
 
@@ -1417,10 +1396,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Trenbolone',
     fullName: 'Tren',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Enanthate',
     typeToHalfLife: {'Enanthate': 5, 'Acetate': 2},
   ),
 
@@ -1428,10 +1405,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Boldenone',
     fullName: 'Bold',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Undecylenate',
     typeToHalfLife: {'Undecylenate': 14},
   ),
 
@@ -1439,10 +1414,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Masteron',
     fullName: 'Masteron',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Propionate',
     typeToHalfLife: {'Propionate': 1.5},
   ),
 
@@ -1450,10 +1423,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Primobolan',
     fullName: 'Primo',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Enanthate',
     typeToHalfLife: {'Enanthate': 10},
   ),
 
@@ -1461,10 +1432,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Anavar',
     fullName: 'Anavar',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Oxandrolone',
     typeToHalfLife: {'Oxandrolone': 9},
   ),
 
@@ -1472,10 +1441,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Winstrol',
     fullName: 'Winstrol',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Stanozolol',
     typeToHalfLife: {'Stanozolol': 9},
   ),
 
@@ -1483,10 +1450,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Dianabol',
     fullName: 'Dianabol',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Methandienone',
     typeToHalfLife: {'Methandienone': 4.5},
   ),
 
@@ -1494,10 +1459,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Anadrol',
     fullName: 'Anadrol',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Oxymetholone',
     typeToHalfLife: {'Oxymetholone': 9},
   ),
 
@@ -1505,10 +1468,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Proviron',
     fullName: 'Proviron',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'mg',
-    type: 'Mesterolone',
     typeToHalfLife: {'Mesterolone': 12},
   ),
 
@@ -1517,10 +1478,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Arimidex',
     fullName: 'Arimidex',
-    category:
-        ComponentCategoryClass.getName(ComponentCategory.aromataseInhibitor),
+    category: ComponentCategoryClass.getName(ComponentCategory.aromataseInhibitor),
     unit: 'mg',
-    type: 'Anastrozole',
     typeToHalfLife: {'Anastrozole': 2},
   ),
 
@@ -1529,10 +1488,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'Aromasin',
     fullName: 'Aromasin',
-    category:
-        ComponentCategoryClass.getName(ComponentCategory.aromataseInhibitor),
+    category: ComponentCategoryClass.getName(ComponentCategory.aromataseInhibitor),
     unit: 'mg',
-    type: 'Exemestane',
     typeToHalfLife: {'Exemestane': 1.5},
   ),
 
@@ -1543,7 +1500,6 @@ List<MedicationComponent> componentsInitial = [
     fullName: 'Nolvadex',
     category: ComponentCategoryClass.getName(ComponentCategory.pct),
     unit: 'mg',
-    type: 'Tamoxifen',
     typeToHalfLife: {'Tamoxifen': 5},
   ),
 
@@ -1554,7 +1510,6 @@ List<MedicationComponent> componentsInitial = [
     fullName: 'Clomid',
     category: ComponentCategoryClass.getName(ComponentCategory.pct),
     unit: 'mg',
-    type: 'Clomiphene',
     typeToHalfLife: {'Clomiphene': 5},
   ),
 
@@ -1565,7 +1520,6 @@ List<MedicationComponent> componentsInitial = [
     fullName: 'HCG',
     category: ComponentCategoryClass.getName(ComponentCategory.pct),
     unit: 'IU',
-    type: 'HCG',
     typeToHalfLife: {'HCG': 1},
   ),
 
@@ -1574,10 +1528,8 @@ List<MedicationComponent> componentsInitial = [
   MedicationComponent(
     name: 'HGH',
     fullName: 'HGH',
-    category: ComponentCategoryClass.getName(
-        ComponentCategory.hormoneReplacementTherapy),
+    category: ComponentCategoryClass.getName(ComponentCategory.hormoneReplacementTherapy),
     unit: 'IU',
-    type: 'HGH',
     typeToHalfLife: {'HGH': 1},
   ),
 ];

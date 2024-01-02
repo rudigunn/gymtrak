@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gymtrak/utilities/databases/medication_database.dart';
@@ -14,19 +15,16 @@ class MedicationBottomSheetWidget extends StatefulWidget {
   final List<String> folders;
   final MedicationPlan? existingPlan;
 
-  const MedicationBottomSheetWidget(
-      {Key? key, required this.folders, this.existingPlan})
-      : super(key: key);
+  const MedicationBottomSheetWidget({super.key, required this.folders, this.existingPlan});
 
   @override
-  _MedicationBottomSheetWidgetState createState() =>
-      _MedicationBottomSheetWidgetState();
+  MedicationBottomSheetWidgetState createState() => MedicationBottomSheetWidgetState();
 }
 
-class _MedicationBottomSheetWidgetState
-    extends State<MedicationBottomSheetWidget> {
+class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget> {
+  int? planId;
   late String planName;
-  late DateTime planStartDate;
+  DateTime planStartDate = DateTime.now();
   String? planStartDateString;
   String selectedFolder = 'Select a folder';
 
@@ -34,8 +32,10 @@ class _MedicationBottomSheetWidgetState
   List<MedicationComponentPlan> componentPlans = [];
   List<MedicationComponent> components = [];
   List<MedicationComponent> filteredComponents = [];
+  GlobalKey<MedicationInputSheetState> medicationInputKey = GlobalKey();
 
   final TextEditingController searchController = TextEditingController();
+  final TextEditingController planNameController = TextEditingController();
 
   @override
   void initState() {
@@ -44,8 +44,11 @@ class _MedicationBottomSheetWidgetState
   }
 
   Future<void> _initializeState() async {
+    planId = widget.existingPlan?.id;
     planName = widget.existingPlan?.name ?? '';
+    planNameController.text = planName;
     selectedFolder = widget.existingPlan?.folder ?? 'Select a folder';
+    componentPlans = widget.existingPlan?.medicationComponentPlans ?? [];
     planStartDate = DateTime.now();
     planStartDateString = _formatDate(planStartDate);
     _loadComponents();
@@ -67,10 +70,16 @@ class _MedicationBottomSheetWidgetState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildTextField('Plan Name', 'Enter a name for this plan',
-                hintText: planName, onChanged: (value) {
-              planName = value;
-            }),
+            _buildTextField(
+              'Plan Name',
+              'Enter a name for this plan',
+              hintText: planName,
+              onChanged: (value) {
+                setState(() {
+                  planName = value;
+                });
+              },
+            ),
             const SizedBox(height: 20),
             _buildFolderDropdown(),
             const SizedBox(height: 20),
@@ -92,6 +101,7 @@ class _MedicationBottomSheetWidgetState
   Widget _buildTextField(String labelText, String helperText,
       {String? hintText, required ValueChanged<String> onChanged}) {
     return TextField(
+      controller: planNameController,
       decoration: InputDecoration(
         labelText: labelText,
         helperText: helperText,
@@ -160,32 +170,35 @@ class _MedicationBottomSheetWidgetState
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         final component = filteredComponents[index];
-        //final valueExists = componentPlans.containsKey(parameterName);
+        MedicationComponentPlan? matchingComponentPlan = componentPlans.firstWhereOrNull(
+          (element) => element.medicationComponent.id == component.id,
+        );
+
+        double? componentDosage = matchingComponentPlan?.dosage;
 
         return ListTile(
           title: Text(component.name),
           subtitle: Text(component.fullName),
-          trailing: IconButton(
-            icon: const Icon(Symbols.arrow_right),
-            onPressed: () => _showComponentInput(context, component),
-          ),
-          onTap: () => _showComponentInput(context, component),
+          trailing: matchingComponentPlan != null
+              ? Text('$componentDosage ${component.unit}', style: const TextStyle(fontSize: 16, color: Colors.black54))
+              : IconButton(
+                  icon: const Icon(Symbols.arrow_right),
+                  onPressed: () => _showComponentInput(context, component, matchingComponentPlan),
+                ),
+          onTap: () => _showComponentInput(context, component, matchingComponentPlan),
         );
       },
     );
   }
 
   Future<void> _loadComponents() async {
-    List<MedicationComponent> loadedComponents =
-        await MedicationDatabaseHelper.instance.getAllMedicationComponents();
+    List<MedicationComponent> loadedComponents = await MedicationDatabaseHelper.instance.getAllMedicationComponents();
 
     if (loadedComponents.isEmpty) {
       for (MedicationComponent component in componentsInitial) {
-        await MedicationDatabaseHelper.instance
-            .insertMedicationComponent(component);
+        await MedicationDatabaseHelper.instance.insertMedicationComponent(component);
       }
-      loadedComponents =
-          await MedicationDatabaseHelper.instance.getAllMedicationComponents();
+      loadedComponents = await MedicationDatabaseHelper.instance.getAllMedicationComponents();
     }
 
     setState(() {
@@ -197,8 +210,7 @@ class _MedicationBottomSheetWidgetState
     String searchTerm = searchController.text.toLowerCase();
 
     return components.where((component) {
-      return (selectedCategories.isEmpty ||
-              selectedCategories.contains(component.category)) &&
+      return (selectedCategories.isEmpty || selectedCategories.contains(component.category)) &&
           (searchTerm.isEmpty ||
               component.name.toLowerCase().startsWith(searchTerm) ||
               component.fullName.toLowerCase().startsWith(searchTerm));
@@ -211,8 +223,7 @@ class _MedicationBottomSheetWidgetState
       padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children:
-            categories.map((category) => _buildFilterChip(category)).toList(),
+        children: categories.map((category) => _buildFilterChip(category)).toList(),
       ),
     );
   }
@@ -255,31 +266,106 @@ class _MedicationBottomSheetWidgetState
   }
 
   void _showComponentInput(
-      BuildContext context, MedicationComponent component) {
-    showModalBottomSheet<MedicationComponentPlan>(
+      BuildContext context, MedicationComponent component, MedicationComponentPlan? medicationComponentPlan) async {
+    MedicationComponentPlan? componentPlan = await showModalBottomSheet<MedicationComponentPlan>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
         return FractionallySizedBox(
-          heightFactor: 0.9, // Adjust the height as needed
+          heightFactor: 0.9,
           child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(30)), // Rounded top edge
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             child: Scaffold(
               appBar: AppBar(
-                title: Text(component.name),
+                title: Align(
+                  alignment: Alignment.center,
+                  child: Text(component.name),
+                ),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.check),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      MedicationInputSheetState? state = medicationInputKey.currentState;
+                      if (state != null) {
+                        double? dosage = state.dosage;
+                        String? selectedType = state.selectedType;
+                        String? timeString = state.timeString;
+                        int selectedInterval = state.selectedInterval;
+                        Map<String, bool> daysSelected = state.daysSelected;
+
+                        if (dosage == null || dosage <= 0) {
+                          debugPrint(state.dosage.toString());
+                          _showErrorDialog(context, 'Please enter a valid dosage.');
+                          return;
+                        }
+
+                        if (selectedType == null || selectedType.isEmpty) {
+                          _showErrorDialog(context, 'Please select a type.');
+                          return;
+                        }
+
+                        if (timeString == null || timeString.isEmpty) {
+                          _showErrorDialog(context, 'Please select a time for intake.');
+                          return;
+                        }
+
+                        if (selectedInterval == 0 && !daysSelected.containsValue(true)) {
+                          _showErrorDialog(context, 'Please select a regular interval or specific days.');
+                          return;
+                        }
+
+                        MedicationComponentPlan componentPlan = MedicationComponentPlan(
+                          dosage: dosage,
+                          type: selectedType,
+                          time: timeString,
+                          frequency: selectedInterval > 0 ? selectedInterval * 24.0 : 0.0,
+                          intakeDays: daysSelected.keys.where((day) => daysSelected[day]!).toList(),
+                          medicationComponent: component,
+                        );
+
+                        Navigator.of(context).pop(componentPlan);
+                      }
                     },
                   ),
                 ],
               ),
-              body: MedicationInputSheet(component: component),
+              body: MedicationInputSheet(
+                  key: medicationInputKey, component: component, componentPlan: medicationComponentPlan),
             ),
           ),
+        );
+      },
+    );
+
+    if (componentPlan != null) {
+      setState(() {
+        MedicationComponentPlan? existingComponentPlan = componentPlans.firstWhereOrNull(
+          (element) => element.medicationComponent.id == componentPlan.medicationComponent.id,
+        );
+        if (existingComponentPlan != null) {
+          componentPlans.remove(existingComponentPlan);
+        }
+        componentPlans.add(componentPlan);
+        debugPrint('Added component plan: ${componentPlans.toString()}');
+      });
+    }
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );
@@ -288,15 +374,19 @@ class _MedicationBottomSheetWidgetState
 
 class MedicationInputSheet extends StatefulWidget {
   final MedicationComponent component;
+  final MedicationComponentPlan? componentPlan;
 
-  MedicationInputSheet({required this.component});
+  const MedicationInputSheet({super.key, required this.component, required this.componentPlan});
 
   @override
-  _MedicationInputSheetState createState() => _MedicationInputSheetState();
+  MedicationInputSheetState createState() => MedicationInputSheetState();
 }
 
-class _MedicationInputSheetState extends State<MedicationInputSheet> {
-  TextEditingController textEditingController = TextEditingController();
+class MedicationInputSheetState extends State<MedicationInputSheet> {
+  double? dosage;
+  String? selectedType;
+  String? timeString;
+  int selectedInterval = 0;
   Map<String, bool> daysSelected = {
     'Monday': false,
     'Tuesday': false,
@@ -307,11 +397,27 @@ class _MedicationInputSheetState extends State<MedicationInputSheet> {
     'Sunday': false,
   };
 
-  String? timeString;
-  int selectedInterval = 0;
-  double? dosage;
+  TextEditingController textEditingController = TextEditingController();
   ExpansionTileController regularIntervalController = ExpansionTileController();
   ExpansionTileController certainDaysController = ExpansionTileController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.componentPlan != null) {
+      dosage = widget.componentPlan!.dosage;
+      textEditingController.text = widget.componentPlan!.dosage.toString();
+      selectedType = widget.componentPlan!.type;
+      timeString = widget.componentPlan!.time;
+      selectedInterval = widget.componentPlan!.frequency == 0 ? 0 : (widget.componentPlan!.frequency / 24).round();
+      for (String day in widget.componentPlan!.intakeDays) {
+        daysSelected[day] = true;
+      }
+
+      debugPrint(selectedInterval.toString());
+      debugPrint(daysSelected.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -322,57 +428,108 @@ class _MedicationInputSheetState extends State<MedicationInputSheet> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Enter Dosage',
-                    suffixText: widget.component.unit,
-                    alignLabelWithHint: true,
-                  ),
-                  inputFormatters: [LengthLimitingTextInputFormatter(30)],
-                  maxLines: 1,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  onChanged: (value) {
-                    setState(() {
-                      dosage = double.tryParse(value);
-                    });
-                  }),
+              _buildDosageInputField(),
               const SizedBox(height: 20),
-              _buildTimePicker(),
-              const Text('Select time of intake'),
+              _buildTypeSelector(),
               const SizedBox(height: 20),
-              Theme(
-                data: ThemeData(dividerColor: Colors.black26),
-                child: ExpansionTile(
-                  title: selectedInterval == 0
-                      ? const Text('Regular Interval')
-                      : Text('Regular Interval: every $selectedInterval. day'),
-                  children: [
-                    _buildRegularIntervalSelector(),
-                  ],
-                ),
-              ),
+              _buildTimePickerWidget(),
               const SizedBox(height: 20),
-              Theme(
-                data: ThemeData(dividerColor: Colors.black26),
-                child: ExpansionTile(
-                  title: const Text('Certain Days'),
-                  controller: certainDaysController,
-                  onExpansionChanged: (value) {
-                    if (value) {
-                      if (selectedInterval > 0) {
-                        certainDaysController.collapse();
-                      }
-                    }
-                  },
-                  children: [
-                    _buildCertainDaysSelector(),
-                  ],
-                ),
-              ),
+              _buildRegularIntervalSelectorWidget(),
+              const SizedBox(height: 20),
+              _buildCertainDaysSelectorWidget(),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildDosageInputField() {
+    return TextField(
+        controller: textEditingController,
+        decoration: InputDecoration(
+          labelText: 'Enter Dosage',
+          suffixText: widget.component.unit,
+        ),
+        inputFormatters: [LengthLimitingTextInputFormatter(30)],
+        maxLines: 1,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        onChanged: (value) {
+          setState(() {
+            dosage = double.tryParse(value.replaceAll(',', '.'));
+            debugPrint(dosage.toString());
+          });
+        });
+  }
+
+  Widget _buildTimePickerWidget() {
+    return Column(
+      children: [
+        _buildTimePicker(),
+      ],
+    );
+  }
+
+  Widget _buildRegularIntervalSelectorWidget() {
+    return Theme(
+      data: ThemeData(dividerColor: Colors.black26),
+      child: ExpansionTile(
+        title: selectedInterval == 0
+            ? const Text('Regular Interval')
+            : Text('Regular Interval: every $selectedInterval. day'),
+        controller: regularIntervalController,
+        onExpansionChanged: (value) {
+          if (value) {
+            if (daysSelected.containsValue(true)) {
+              _showErrorDialog(context, 'You have already selected certain days. Please deselect them to continue.');
+              regularIntervalController.collapse();
+            }
+          }
+        },
+        children: [
+          _buildRegularIntervalSelector(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCertainDaysSelectorWidget() {
+    String selectedDaysString = '';
+    if (daysSelected.values.every((element) => element)) {
+      selectedDaysString = 'Every day';
+    } else {
+      for (String day in daysSelected.keys) {
+        if (daysSelected[day]!) {
+          selectedDaysString += '$day, ';
+        }
+      }
+      if (selectedDaysString.isNotEmpty) {
+        selectedDaysString = selectedDaysString.substring(0, selectedDaysString.length - 2);
+      }
+    }
+    return Theme(
+      data: ThemeData(dividerColor: Colors.black26),
+      child: ExpansionTile(
+        title: selectedDaysString.isEmpty ? const Text('Certain Days') : Text('Certain Days: $selectedDaysString'),
+        controller: certainDaysController,
+        onExpansionChanged: (value) {
+          if (value) {
+            if (selectedInterval > 0) {
+              _showErrorDialog(
+                  context, 'You have already selected a regular interval. Please set it to 0 to continue.');
+              certainDaysController.collapse();
+            }
+          }
+        },
+        children: [
+          _buildCertainDaysSelector(),
+        ],
       ),
     );
   }
@@ -441,6 +598,47 @@ class _MedicationInputSheetState extends State<MedicationInputSheet> {
           },
         );
       }).toList(),
+    );
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTypeSelector() {
+    return DropdownButton<String>(
+      items: widget.component.typeToHalfLife.keys.map((String type) {
+        return DropdownMenuItem<String>(
+          value: type,
+          child: Text(type),
+        );
+      }).toList(),
+      hint: selectedType == null ? const Text('Select a type') : Text(selectedType!),
+      onChanged: (String? value) {
+        setState(() {
+          selectedType = value;
+        });
+      },
+      underline: Container(),
+      style: const TextStyle(color: Colors.black),
+      elevation: 1,
+      borderRadius: BorderRadius.circular(15),
     );
   }
 }
