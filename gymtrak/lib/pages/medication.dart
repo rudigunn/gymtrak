@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/databases/general_database.dart';
 import 'package:gymtrak/utilities/databases/medication_database.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:gymtrak/utilities/misc/notification_service.dart' as localNotificationService;
 
 class UserMedicationPage extends StatefulWidget {
   const UserMedicationPage({super.key});
@@ -37,6 +38,15 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            ElevatedButton(
+              onPressed: () {
+                localNotificationService.showLocalNotification(
+                  'Yay you did it!',
+                  'Congrats on your first local notification',
+                );
+              },
+              child: Text('Test Notification'),
+            ),
             Container(
               alignment: Alignment.centerLeft,
               child: const Padding(

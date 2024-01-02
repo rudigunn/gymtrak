@@ -36,11 +36,21 @@ class _HomePageState extends State<HomePage> {
   Widget get _overlayContent => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _createOverlayButton(const Icon(Symbols.health_metrics, color: Colors.white,), 'Blood Work', () {
+          _createOverlayButton(
+              const Icon(
+                Symbols.health_metrics,
+                color: Colors.white,
+              ),
+              'Blood Work', () {
             _switchPage(true, false);
           }),
           const SizedBox(height: 10),
-          _createOverlayButton(const Icon(Symbols.syringe, color: Colors.white,), 'Medication', () {
+          _createOverlayButton(
+              const Icon(
+                Symbols.syringe,
+                color: Colors.white,
+              ),
+              'Medication', () {
             _switchPage(false, true);
           }),
           const SizedBox(height: 15),
@@ -98,9 +108,10 @@ class _HomePageState extends State<HomePage> {
             : _pages[_selectedIndex]);
 
     return Scaffold(
-      body: displayBody, 
-      resizeToAvoidBottomInset:false,
-      bottomNavigationBar: _buildBottomNavigationBar(), );
+      body: displayBody,
+      resizeToAvoidBottomInset: false,
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
   }
 
   Widget _buildBottomNavigationBar() {
@@ -108,53 +119,73 @@ class _HomePageState extends State<HomePage> {
       child: SizedBox(
         height: 60,
         child: Theme(
-          data: ThemeData(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: [
+            data: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: Container(
+              decoration: BoxDecoration(boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
                   blurRadius: 0.1,
                   offset: const Offset(0.0, -0.5),
                 ),
-              ]
-            ),
-            child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _navigateBottomBar,
-            elevation: 0,
-            type: BottomNavigationBarType.fixed,
-            selectedLabelStyle: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
-            unselectedLabelStyle: const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.normal),
-            showSelectedLabels: true,
-            selectedItemColor: Colors.black,
-            unselectedItemColor: Colors.black54,
-            showUnselectedLabels: true,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Symbols.dashboard, color: Colors.black,),
-                activeIcon: Icon(Symbols.dashboard, fill: 1, color: Colors.black,),
-                label: 'Charts'),
-              BottomNavigationBarItem(
-                  icon: Icon(Symbols.straighten, color: Colors.black),
-                  activeIcon: Icon(Symbols.straighten, fill: 1, color: Colors.black),
-                  label: 'Metrics'),
-              BottomNavigationBarItem(icon: Icon(Symbols.add, color: Colors.black,), label: "Add"),
-              BottomNavigationBarItem(
-                  icon: Icon(Symbols.calendar_today, color: Colors.black),
-                  activeIcon: Icon(Symbols.calendar_today, fill: 1, color: Colors.black,),
-                  label: 'Calendar'),
-              BottomNavigationBarItem(
-                  icon: Icon(Symbols.settings, color: Colors.black,),
-                  activeIcon: Icon(Symbols.settings, fill: 1, color: Colors.black,),
-                  label: 'Settings')
-            ],
-          ),
-          )
-        ),
+              ]),
+              child: BottomNavigationBar(
+                currentIndex: _selectedIndex,
+                onTap: _navigateBottomBar,
+                elevation: 0,
+                type: BottomNavigationBarType.fixed,
+                selectedLabelStyle: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.normal),
+                unselectedLabelStyle: const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.normal),
+                showSelectedLabels: true,
+                selectedItemColor: Colors.black,
+                unselectedItemColor: Colors.black54,
+                showUnselectedLabels: true,
+                items: const [
+                  BottomNavigationBarItem(
+                      icon: Icon(
+                        Symbols.dashboard,
+                        color: Colors.black,
+                      ),
+                      activeIcon: Icon(
+                        Symbols.dashboard,
+                        fill: 1,
+                        color: Colors.black,
+                      ),
+                      label: 'Charts'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Symbols.straighten, color: Colors.black),
+                      activeIcon: Icon(Symbols.straighten, fill: 1, color: Colors.black),
+                      label: 'Metrics'),
+                  BottomNavigationBarItem(
+                      icon: Icon(
+                        Symbols.add,
+                        color: Colors.black,
+                      ),
+                      label: "Add"),
+                  BottomNavigationBarItem(
+                      icon: Icon(Symbols.calendar_today, color: Colors.black),
+                      activeIcon: Icon(
+                        Symbols.calendar_today,
+                        fill: 1,
+                        color: Colors.black,
+                      ),
+                      label: 'Calendar'),
+                  BottomNavigationBarItem(
+                      icon: Icon(
+                        Symbols.settings,
+                        color: Colors.black,
+                      ),
+                      activeIcon: Icon(
+                        Symbols.settings,
+                        fill: 1,
+                        color: Colors.black,
+                      ),
+                      label: 'Settings')
+                ],
+              ),
+            )),
       ),
     );
   }

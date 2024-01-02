@@ -1,7 +1,10 @@
 import 'package:gymtrak/home.dart';
 import 'package:flutter/material.dart';
+import 'package:gymtrak/utilities/misc/notification_service.dart' as localNotificationService;
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await localNotificationService.setup();
   runApp(const MainApp());
 }
 
