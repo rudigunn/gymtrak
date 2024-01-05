@@ -12,15 +12,13 @@ class BottomSheetWidget extends StatefulWidget {
   final List<String> folders;
   final BloodWorkResult? existingResult;
 
-  const BottomSheetWidget(
-      {Key? key, required this.folders, this.existingResult})
-      : super(key: key);
+  const BottomSheetWidget({super.key, required this.folders, this.existingResult});
 
   @override
-  _BottomSheetWidgetState createState() => _BottomSheetWidgetState();
+  BottomSheetWidgetState createState() => BottomSheetWidgetState();
 }
 
-class _BottomSheetWidgetState extends State<BottomSheetWidget> {
+class BottomSheetWidgetState extends State<BottomSheetWidget> {
   late String testName;
   late DateTime testDate;
   String? testDateString;
@@ -186,8 +184,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
       padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children:
-            categories.map((category) => _buildFilterChip(category)).toList(),
+        children: categories.map((category) => _buildFilterChip(category)).toList(),
       ),
     );
   }
@@ -233,8 +230,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
     String searchTerm = searchController.text.toLowerCase();
 
     return parameters.values.where((parameter) {
-      return (selectedCategories.isEmpty ||
-              selectedCategories.contains(parameter.category)) &&
+      return (selectedCategories.isEmpty || selectedCategories.contains(parameter.category)) &&
           (searchTerm.isEmpty ||
               parameter.name.toLowerCase().startsWith(searchTerm) ||
               parameter.fullName.toLowerCase().startsWith(searchTerm));
@@ -294,10 +290,8 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             children: [
               TextField(
                 controller: textEditingController,
-                decoration: InputDecoration(
-                    labelText: 'Enter Value', suffixText: parameter.unit),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(labelText: 'Enter Value', suffixText: parameter.unit),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [LengthLimitingTextInputFormatter(15)],
               ),
             ],
@@ -309,8 +303,7 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             ),
             TextButton(
               onPressed: () async {
-                String inputValue =
-                    textEditingController.text.replaceAll(',', '.');
+                String inputValue = textEditingController.text.replaceAll(',', '.');
                 try {
                   double convertedValue = double.parse(inputValue);
                   Navigator.pop(context, convertedValue);
@@ -351,15 +344,13 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   }
 
   Future<void> _loadParameters() async {
-    Map<int, BloodWorkParameter> loadedParameters =
-        await GeneralDatabase.instance.readAllBloodWorkParameters();
+    Map<int, BloodWorkParameter> loadedParameters = await GeneralDatabase.instance.readAllBloodWorkParameters();
 
     if (loadedParameters.isEmpty) {
       for (BloodWorkParameter parameter in parametersInitial) {
         await GeneralDatabase.instance.createBloodWorkParameter(parameter);
       }
-      loadedParameters =
-          await GeneralDatabase.instance.readAllBloodWorkParameters();
+      loadedParameters = await GeneralDatabase.instance.readAllBloodWorkParameters();
     }
 
     setState(() {

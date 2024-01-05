@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:gymtrak/utilities/medication/medication_bottom_sheet.dart';
 import 'package:gymtrak/utilities/medication/medication_component_plan.dart';
 import 'package:gymtrak/utilities/medication/medication_plan.dart';
@@ -38,17 +39,6 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            ElevatedButton(
-              onPressed: () {
-                var notificationService = NotificationService();
-                notificationService.initNotification();
-                notificationService.showNotification(
-                  title: 'Yay you did it!',
-                  body: 'Congrats on your first local notification',
-                );
-              },
-              child: const Text('Test Notification'),
-            ),
             Container(
               alignment: Alignment.centerLeft,
               child: const Padding(
@@ -229,6 +219,48 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
       }
 
       if (medicationPlan.id != 0) {
+        String localTimeZone = await AwesomeNotifications().getLocalTimeZoneIdentifier();
+        AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+          if (!isAllowed) {
+            AwesomeNotifications().requestPermissionToSendNotifications();
+          }
+        });
+
+        DateTime now = DateTime.now();
+
+        AwesomeNotifications().createNotification(
+          // actionButtons: [
+          //   NotificationActionButton(
+          //     key: 'MARK_AS_DONE',
+          //     label: 'Mark as done',
+          //     enabled: true,
+          //     actionType: ActionType.KeepOnTop,
+          //   ),
+          //   NotificationActionButton(
+          //     key: 'MARK_AS_UNDONE',
+          //     label: 'Mark as undone',
+          //     enabled: true,
+          //     actionType: ActionType.KeepOnTop,
+          //   ),
+          // ],
+          content: NotificationContent(
+            id: 10,
+            channelKey: 'medication_reminder',
+            actionType: ActionType.DisabledAction,
+            title: 'Hello World!',
+            body: 'This is my first notification!',
+            category: NotificationCategory.Reminder,
+          ),
+          schedule: NotificationCalendar(
+            allowWhileIdle: true,
+            repeats: false,
+            hour: now.hour,
+            minute: now.minute + 1,
+            second: now.second,
+            timeZone: localTimeZone,
+          ),
+        );
+
         setState(() {
           if (plans.any((element) => element.id == medicationPlan.id)) {
             plans[plans.indexWhere((element) => element.id == medicationPlan.id)] = medicationPlan;

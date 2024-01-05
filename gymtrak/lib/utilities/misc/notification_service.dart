@@ -1,55 +1,33 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/material.dart';
+import 'package:gymtrak/main.dart';
 
-class NotificationService {
-  final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
-
-  Future<void> initNotification() async {
-    AndroidInitializationSettings initializationSettingsAndroid =
-        const AndroidInitializationSettings('mipmap/ic_launcher');
-
-    var initializationSettingsIOS = DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-        onDidReceiveLocalNotification: (int id, String? title, String? body, String? payload) async {});
-
-    var initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    await notificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) async {});
+class NotificationController {
+  @pragma("vm:entry-point")
+  static Future<void> onNotificationCreatedMethod(ReceivedNotification receivedNotification) async {
+    // Your code goes here
   }
 
-  notificationDetails() {
-    return const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'channelId',
-          'channelName',
-          importance: Importance.max,
-          playSound: true,
-        ),
-        iOS: DarwinNotificationDetails());
+  /// Use this method to detect every time that a new notification is displayed
+  @pragma("vm:entry-point")
+  static Future<void> onNotificationDisplayedMethod(ReceivedNotification receivedNotification) async {
+    // Your code goes here
   }
 
-  Future showNotification({int id = 0, String? title, String? body, String? payLoad}) async {
-    return notificationsPlugin.show(id, title, body, await notificationDetails());
+  /// Use this method to detect if the user dismissed a notification
+  @pragma("vm:entry-point")
+  static Future<void> onDismissActionReceivedMethod(ReceivedAction receivedAction) async {
+    // Your code goes here
   }
 
-  Future scheduleNotification(
-      {int id = 0,
-      String? title,
-      String? body,
-      String? payLoad,
-      required DateTime scheduledNotificationDateTime}) async {
-    return notificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        tz.TZDateTime.from(
-          scheduledNotificationDateTime,
-          tz.local,
-        ),
-        await notificationDetails(),
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
+  /// Use this method to detect when the user taps on a notification or action button
+  @pragma("vm:entry-point")
+  static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
+    // Your code goes here
+
+    // Navigate into pages, avoiding to open the notification details page over another details page already opened
+    // MainApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+    //     '/notification-page', (route) => (route.settings.name != '/notification-page') || route.isFirst,
+    //     arguments: receivedAction);
   }
 }
