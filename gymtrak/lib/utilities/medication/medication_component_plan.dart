@@ -5,7 +5,9 @@ class MedicationComponentPlan {
   String type;
   String time;
   double frequency;
+  Map<int, String> notificationIdsToDates = {};
   List<String> intakeDays = [];
+  List<int> notificationIds = [];
   MedicationComponent medicationComponent;
 
   MedicationComponentPlan({
@@ -13,7 +15,9 @@ class MedicationComponentPlan {
     required this.type,
     required this.time,
     required this.frequency,
+    required this.notificationIdsToDates,
     required this.intakeDays,
+    required this.notificationIds,
     required this.medicationComponent,
   });
 
@@ -21,8 +25,11 @@ class MedicationComponentPlan {
     return {
       'dosage': dosage.toString(),
       'type': type,
+      'time': time,
       'frequency': frequency,
+      'notificatinIdsToDates': notificationIdsToDates,
       'intakeDays': intakeDays,
+      'notificationIds': notificationIds,
       'medicationComponent': medicationComponent.toMap(),
     };
   }
@@ -33,8 +40,13 @@ class MedicationComponentPlan {
       type: map['type'],
       time: map['time'],
       frequency: map['frequency'],
+      notificationIdsToDates: map['notificationIdsAndDates'] == null
+          ? {}
+          : Map<int, String>.from(map['notificationIdsAndDates']),
       intakeDays: List<String>.from(map['intakeDays']),
-      medicationComponent: MedicationComponent.fromMap(map['medicationComponent']),
+      notificationIds: List<int>.from(map['notificationIds']),
+      medicationComponent:
+          MedicationComponent.fromMap(map['medicationComponent']),
     );
   }
 }

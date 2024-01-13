@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/databases/general_database.dart';
 import 'package:gymtrak/utilities/databases/medication_database.dart';
 import 'package:gymtrak/utilities/misc/notification_service.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:sembast/sembast.dart';
 
 class UserMedicationPage extends StatefulWidget {
   const UserMedicationPage({super.key});
@@ -19,7 +21,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   Map<int, String> folders = {};
   List<MedicationPlan> plans = [];
 
-  GlobalKey<MedicationBottomSheetWidgetState> medicationBottomSheetKey = GlobalKey();
+  GlobalKey<MedicationBottomSheetWidgetState> medicationBottomSheetKey =
+      GlobalKey();
 
   final TextEditingController _folderNameController = TextEditingController();
 
@@ -56,7 +59,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 15, color: Colors.white),
+                      textStyle:
+                          const TextStyle(fontSize: 15, color: Colors.white),
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(75, 45),
@@ -87,7 +91,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                       Theme(
                         data: ThemeData(splashFactory: NoSplash.splashFactory),
                         child: IconButton(
-                          icon: const Icon(Icons.create_new_folder, color: Colors.black87),
+                          icon: const Icon(Icons.create_new_folder,
+                              color: Colors.black87),
                           onPressed: () async {
                             _addNewFolder();
                           },
@@ -118,11 +123,13 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   }
 
   void loadFolders() async {
-    Map<int, String> data = await GeneralDatabase.instance.readAllFolders(GeneralDatabase.tableMedicationFolders);
+    Map<int, String> data = await GeneralDatabase.instance
+        .readAllFolders(GeneralDatabase.tableMedicationFolders);
 
     if (data.isEmpty) {
       data = {
-        await GeneralDatabase.instance.createFolder('My Medications', GeneralDatabase.tableMedicationFolders):
+        await GeneralDatabase.instance.createFolder(
+                'My Medications', GeneralDatabase.tableMedicationFolders):
             'My Medications'
       };
     }
@@ -131,7 +138,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     });
   }
 
-  void _showAddMedicationPlanSheet(BuildContext context, MedicationPlan? existingPlan) async {
+  void _showAddMedicationPlanSheet(
+      BuildContext context, MedicationPlan? existingPlan) async {
     MedicationPlan? medicationPlan = await showModalBottomSheet<MedicationPlan>(
       context: context,
       isScrollControlled: true,
@@ -157,16 +165,22 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                   IconButton(
                     icon: const Icon(Icons.check),
                     onPressed: () {
-                      MedicationBottomSheetWidgetState? state = medicationBottomSheetKey.currentState;
+                      MedicationBottomSheetWidgetState? state =
+                          medicationBottomSheetKey.currentState;
 
                       if (state != null) {
-                        if (medicationBottomSheetKey.currentState!.planName.isEmpty) {
-                          _showErrorDialog(context, 'Medication plan name cannot be empty');
+                        if (medicationBottomSheetKey
+                            .currentState!.planName.isEmpty) {
+                          _showErrorDialog(
+                              context, 'Medication plan name cannot be empty');
                           return;
                         }
 
-                        if (medicationBottomSheetKey.currentState!.selectedFolder == 'Select a folder') {
-                          _showErrorDialog(context, 'Medication plan folder cannot be empty');
+                        if (medicationBottomSheetKey
+                                .currentState!.selectedFolder ==
+                            'Select a folder') {
+                          _showErrorDialog(context,
+                              'Medication plan folder cannot be empty');
                           return;
                         }
 
@@ -175,16 +189,21 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                         if (state.planStartDate.year == now.year &&
                             state.planStartDate.month == now.month &&
                             state.planStartDate.day == now.day) {
-                          _showErrorDialog(context, 'Medication plan start date cannot be empty');
+                          _showErrorDialog(context,
+                              'Medication plan start date cannot be empty');
                           return;
                         }
 
-                        List<MedicationComponentPlan> componentPlans = state.componentPlans;
+                        List<MedicationComponentPlan> componentPlans =
+                            state.componentPlans;
                         if (componentPlans.isNotEmpty) {
                           MedicationPlan medicationPlan = MedicationPlan(
                             id: state.planId,
                             name: state.planName,
                             folder: state.selectedFolder,
+                            startDateString:
+                                state.planStartDate.toIso8601String(),
+                            lastRefreshedDateString: '',
                             active: true,
                             medicationComponentPlans: componentPlans,
                             description: '',
@@ -212,66 +231,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     );
     if (medicationPlan != null) {
       debugPrint('Received MedicationPlan: ${medicationPlan.toMap()}');
-      if (medicationPlan.id == null) {
-        medicationPlan.id = await MedicationDatabaseHelper.instance.insertMedicationPlan(medicationPlan);
-      } else {
-        await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
-      }
-
-      if (medicationPlan.id != 0) {
-        String localTimeZone = await AwesomeNotifications().getLocalTimeZoneIdentifier();
-        AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-          if (!isAllowed) {
-            AwesomeNotifications().requestPermissionToSendNotifications();
-          }
-        });
-
-        DateTime now = DateTime.now();
-
-        AwesomeNotifications().createNotification(
-          // actionButtons: [
-          //   NotificationActionButton(
-          //     key: 'MARK_AS_DONE',
-          //     label: 'Mark as done',
-          //     enabled: true,
-          //     actionType: ActionType.KeepOnTop,
-          //   ),
-          //   NotificationActionButton(
-          //     key: 'MARK_AS_UNDONE',
-          //     label: 'Mark as undone',
-          //     enabled: true,
-          //     actionType: ActionType.KeepOnTop,
-          //   ),
-          // ],
-          content: NotificationContent(
-            id: 10,
-            channelKey: 'medication_reminder',
-            actionType: ActionType.DisabledAction,
-            title: 'Hello World!',
-            body: 'This is my first notification!',
-            category: NotificationCategory.Reminder,
-          ),
-          schedule: NotificationCalendar(
-            allowWhileIdle: true,
-            repeats: false,
-            hour: now.hour,
-            minute: now.minute + 1,
-            second: now.second,
-            timeZone: localTimeZone,
-          ),
-        );
-
-        setState(() {
-          if (plans.any((element) => element.id == medicationPlan.id)) {
-            plans[plans.indexWhere((element) => element.id == medicationPlan.id)] = medicationPlan;
-          } else {
-            plans.add(medicationPlan);
-          }
-        });
-
-        debugPrint('MedicationPlan saved to database');
-        debugPrint(plans.toString());
-      }
+      await handleMedicationPlan(medicationPlan);
     }
   }
 
@@ -287,10 +247,12 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             decoration: const InputDecoration(
               hintText: "Enter folder name",
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 172, 172, 172)),
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 172, 172, 172)),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 114, 114, 114)),
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 114, 114, 114)),
               ),
             ),
           ),
@@ -313,8 +275,9 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
               onPressed: () async {
                 if (_folderNameController.text.isNotEmpty) {
                   Navigator.of(context).pop();
-                  int i = await GeneralDatabase.instance
-                      .createFolder(_folderNameController.text, GeneralDatabase.tableMedicationFolders);
+                  int i = await GeneralDatabase.instance.createFolder(
+                      _folderNameController.text,
+                      GeneralDatabase.tableMedicationFolders);
                   setState(() {
                     if (i != 0) {
                       folders[i] = _folderNameController.text;
@@ -334,7 +297,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     return folders.entries.toList().map((entry) {
       String folder = entry.value;
       int folderId = entry.key;
-      List<MedicationPlan> filteredPlans = plans.where((plan) => plan.folder == folder).toList();
+      List<MedicationPlan> filteredPlans =
+          plans.where((plan) => plan.folder == folder).toList();
 
       return Theme(
         data: ThemeData(dividerColor: Colors.black26),
@@ -388,23 +352,31 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          child: Text(plan.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          child: Text(plan.name,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
                         ),
                         _buildPlanPopupMenuButton(plan, index),
                       ],
                     ),
                     Text(plan.active ? 'Active' : 'Inactive',
                         style: TextStyle(
-                            fontSize: 14, color: plan.active ? const Color.fromARGB(255, 112, 186, 115) : Colors.grey)),
+                            fontSize: 14,
+                            color: plan.active
+                                ? const Color.fromARGB(255, 112, 186, 115)
+                                : Colors.grey)),
                     Expanded(
                       child: ListView.builder(
-                        itemCount:
-                            plan.medicationComponentPlans.length > 3 ? 3 + 1 : plan.medicationComponentPlans.length,
+                        itemCount: plan.medicationComponentPlans.length > 3
+                            ? 3 + 1
+                            : plan.medicationComponentPlans.length,
                         itemBuilder: (context, componentIndex) {
                           if (componentIndex >= 3) {
-                            return const Text("...", style: TextStyle(fontSize: 14));
+                            return const Text("...",
+                                style: TextStyle(fontSize: 14));
                           }
-                          MedicationComponentPlan componentPlan = plan.medicationComponentPlans[componentIndex];
+                          MedicationComponentPlan componentPlan =
+                              plan.medicationComponentPlans[componentIndex];
                           return Row(
                             children: [
                               Expanded(
@@ -439,7 +411,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             value: 1,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(plan.active ? 'Set plan to inactive' : 'Set plan to active'),
+              child: Text(
+                  plan.active ? 'Set plan to inactive' : 'Set plan to active'),
             ),
             onTap: () {
               setState(() {
@@ -460,7 +433,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: const Text('Delete Plan'),
-                    content: const Text('Are you sure you want to delete this plan?'),
+                    content: const Text(
+                        'Are you sure you want to delete this plan?'),
                     actions: <Widget>[
                       _buildDialogButton(
                         text: 'Cancel',
@@ -472,7 +446,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                           setState(() {
                             Navigator.pop(context);
                             plans.removeAt(index);
-                            MedicationDatabaseHelper.instance.deleteMedicationPlanWithId(plan.id!);
+                            MedicationDatabaseHelper.instance
+                                .deleteMedicationPlanWithId(plan.id!);
                           });
                         },
                       ),
@@ -542,7 +517,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             ),
             _buildDialogButton(
               text: 'Save',
-              onPressed: () => _handleRenameSave(renameController.text, folderId),
+              onPressed: () =>
+                  _handleRenameSave(renameController.text, folderId),
             ),
           ],
         );
@@ -558,7 +534,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
     Navigator.of(context).pop();
 
-    int i = await GeneralDatabase.instance.updateFolder(folderId, newName, GeneralDatabase.tableMedicationFolders);
+    int i = await GeneralDatabase.instance.updateFolder(
+        folderId, newName, GeneralDatabase.tableMedicationFolders);
     if (i != 0) {
       List<MedicationPlan> updatedPlans = [];
       for (var plan in plans) {
@@ -600,12 +577,14 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
   void _handleDelete(int folderId) async {
     Navigator.of(context).pop();
-    int deletionCount = await GeneralDatabase.instance.deleteFolder(folderId, GeneralDatabase.tableMedicationFolders);
+    int deletionCount = await GeneralDatabase.instance
+        .deleteFolder(folderId, GeneralDatabase.tableMedicationFolders);
     if (deletionCount != 0) {
       List<MedicationPlan> remainingPlans = [];
 
       for (var plan in plans) {
         if (plan.folder == folders[folderId]) {
+          await cancelExistingNotifications(plan.id!);
           await MedicationDatabaseHelper.instance.deleteMedicationPlan(plan);
         } else {
           remainingPlans.add(plan);
@@ -637,10 +616,179 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     );
   }
 
-  Widget _buildDialogButton({required String text, required void Function()? onPressed}) {
+  Widget _buildDialogButton(
+      {required String text, required void Function()? onPressed}) {
     return TextButton(
       onPressed: onPressed,
       child: Text(text),
     );
+  }
+
+  TimeOfDay _convertStringToTimeOfDay(String time) {
+    final format = DateFormat.jm();
+    DateTime? dateTime = format.parseStrict(time);
+    return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
+  }
+
+  int getUniqueId() {
+    return DateTime.now().millisecondsSinceEpoch % 2147483647;
+  }
+
+  Future<void> handleMedicationPlan(MedicationPlan? medicationPlan) async {
+    if (medicationPlan == null) return;
+
+    int planId;
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) async {
+      if (!isAllowed) {
+        await AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+    String localTimeZone =
+        await AwesomeNotifications().getLocalTimeZoneIdentifier();
+
+    if (medicationPlan.id == null) {
+      planId = await MedicationDatabaseHelper.instance
+          .insertMedicationPlan(medicationPlan);
+      medicationPlan.id = planId;
+    } else {
+      planId = medicationPlan.id!;
+      await MedicationDatabaseHelper.instance
+          .updateMedicationPlan(medicationPlan);
+      await cancelExistingNotifications(planId);
+    }
+
+    DateTime now = DateTime.now();
+    DateTime startDate = DateTime.parse(medicationPlan.startDateString);
+
+    for (MedicationComponentPlan componentPlan
+        in medicationPlan.medicationComponentPlans) {
+      TimeOfDay timeOfDay = _convertStringToTimeOfDay(componentPlan.time);
+      if (componentPlan.frequency != 0) {
+        // Schedule notifictaions for each interval
+        // First check if there are schedule notifications
+        int numberOfNotifictionsToAdd = 0;
+        if (componentPlan.notificationIdsToDates.isNotEmpty) {
+          // check which of them are scheduled for the future
+          for (MapEntry<int, String> entry
+              in componentPlan.notificationIdsToDates.entries) {
+            DateTime notificationDate = DateTime.parse(entry.value);
+            if (notificationDate.isAfter(now)) {
+              // starting from this date 7 new notifications should be added
+              startDate = notificationDate;
+              break;
+            } else {
+              // notifictation is in the past so the id should be removed from the database
+              componentPlan.notificationIdsToDates.remove(entry.key);
+              numberOfNotifictionsToAdd++;
+            }
+          }
+        } else {
+          numberOfNotifictionsToAdd = 7;
+        }
+        List<int> notificationIds = await MedicationDatabaseHelper.instance
+            .getNotificationIds(numberOfNotifictionsToAdd);
+
+        // add new notifications
+        for (int i = 1; i <= numberOfNotifictionsToAdd; i++) {
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: notificationIds[i - 1],
+              channelKey: 'medication_reminder',
+              actionType: ActionType.DisabledAction,
+              title: 'Medication reminder',
+              body: 'You have a medication to take!',
+              category: NotificationCategory.Reminder,
+            ),
+            schedule: NotificationCalendar(
+              allowWhileIdle: true,
+              repeats: false,
+              year: startDate.year,
+              month: startDate.month,
+              day: startDate.day,
+              hour: timeOfDay.hour,
+              minute: timeOfDay.minute,
+              second: 0,
+              timeZone: localTimeZone,
+            ),
+          );
+          startDate = startDate
+              .add(Duration(days: i * componentPlan.frequency.toInt()));
+        }
+      } else {
+        List<int> notificationIds = await MedicationDatabaseHelper.instance
+            .getNotificationIds(componentPlan.intakeDays.length);
+
+        Map<String, int> daysToInts = {
+          'Monday': DateTime.monday,
+          'Tuesday': DateTime.tuesday,
+          'Wednesday': DateTime.wednesday,
+          'Thursday': DateTime.thursday,
+          'Friday': DateTime.friday,
+          'Saturday': DateTime.saturday,
+          'Sunday': DateTime.sunday,
+        };
+
+        for (int i = 0; i < componentPlan.intakeDays.length; i++) {
+          await AwesomeNotifications().createNotification(
+            content: NotificationContent(
+              id: notificationIds[i],
+              channelKey: 'medication_reminder',
+              actionType: ActionType.DisabledAction,
+              title: 'Medication reminder',
+              body: 'You have a medication to take!',
+              category: NotificationCategory.Reminder,
+            ),
+            schedule: NotificationCalendar(
+              allowWhileIdle: true,
+              repeats: false,
+              weekday: daysToInts[componentPlan.intakeDays[i]],
+              hour: timeOfDay.hour,
+              minute: timeOfDay.minute,
+              second: 0,
+              timeZone: localTimeZone,
+            ),
+          );
+        }
+      }
+    }
+
+    medicationPlan.lastRefreshedDateString = DateTime.now().toIso8601String();
+
+    // Save the updated MedicationPlan with notification IDs
+    await MedicationDatabaseHelper.instance
+        .updateMedicationPlan(medicationPlan);
+
+    setState(() {
+      if (plans.any((element) => element.id == medicationPlan.id)) {
+        plans[plans.indexWhere((element) => element.id == medicationPlan.id)] =
+            medicationPlan;
+      } else {
+        plans.add(medicationPlan);
+      }
+    });
+  }
+
+  Future<void> cancelExistingNotifications(int planId) async {
+    MedicationPlan? medicationPlan =
+        await MedicationDatabaseHelper.instance.getMedicationPlan(planId);
+
+    List<MedicationComponentPlan> components =
+        medicationPlan?.medicationComponentPlans ?? [];
+    for (MedicationComponentPlan component in components) {
+      if (component.notificationIds.isNotEmpty) {
+        for (int notificationId in component.notificationIds) {
+          await AwesomeNotifications().cancel(notificationId);
+        }
+      }
+    }
+  }
+
+  Future<void> refreshReminders() async {
+    List<MedicationPlan> allPlans =
+        await MedicationDatabaseHelper.instance.getAllMedicationPlans();
+
+    for (MedicationPlan plan in allPlans) {
+      await handleMedicationPlan(plan);
+    }
   }
 }

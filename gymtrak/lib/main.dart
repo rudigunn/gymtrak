@@ -2,7 +2,6 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:gymtrak/home.dart';
 import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/misc/notification_service.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,20 +16,19 @@ Future<void> main() async {
         ),
       ],
       channelGroups: [
-        NotificationChannelGroup(channelGroupKey: 'medication_reminder', channelGroupName: 'Medication group')
+        NotificationChannelGroup(
+            channelGroupKey: 'medication_reminder',
+            channelGroupName: 'Medication group')
       ],
       debug: true);
-  final PermissionStatus status = await Permission.notification.request();
-  if (status.isPermanentlyDenied) {
-    await openAppSettings();
-  }
   runApp(const MainApp());
 }
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   static const String name = 'Gymtrak';
 
@@ -44,9 +42,12 @@ class MainAppState extends State<MainApp> {
     // Only after at least the action method is set, the notification events are delivered
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod);
+        onNotificationCreatedMethod:
+            NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:
+            NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:
+            NotificationController.onDismissActionReceivedMethod);
 
     super.initState();
   }

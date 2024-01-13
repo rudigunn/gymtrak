@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/medication/medication_component.dart';
 import 'package:gymtrak/utilities/medication/medication_plan.dart';
 import 'package:sembast/sembast.dart';
@@ -11,6 +12,7 @@ class MedicationDatabaseHelper {
   static const tableMedicationEntries = 'medication_entries';
   static const tableMedicationPlans = 'medication_plans';
   static const tableMedicationComponents = 'medication_components';
+  static const tableNotificationIds = 'notification_ids';
 
   // Singleton class setup
   MedicationDatabaseHelper._privateConstructor();
@@ -100,7 +102,45 @@ class MedicationDatabaseHelper {
     await _deleteDatabase();
   }
 
-  // MedicationComponent
+  Future<List<int>> getNotificationIds(int count) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableNotificationIds);
+
+    // Find the highest ID in use
+    var results = await store.find(db,
+        finder: Finder(sortOrders: [SortOrder(Field.value, false)], limit: 1));
+
+    int highestId = 0;
+    debugPrint(results.toString());
+    if (results.isNotEmpty) {
+      highestId = results.first.value.values.first as int;
+    }
+
+    // Generate 10 new unique IDs
+    List<int> newIds = [];
+    for (int i = 1; i <= count; i++) {
+      newIds.add(highestId + i);
+    }
+
+    // Add the new IDs to the database such that we have Map<int, int>
+
+    for (int i = 0; i < newIds.length; i++) {
+      await store.add(db, {newIds[i].toString(): newIds[i]});
+    }
+
+    return newIds;
+  }
+
+  Future<void> deleteNotificationIds(List<int> notificationIds) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableNotificationIds);
+
+    for (int i = 0; i < notificationIds.length; i++) {
+      await store.delete(db,
+          finder: Finder(filter: Filter.byKey(notificationIds[i])));
+    }
+  }
+
   Future<int> insertMedicationComponent(
       MedicationComponent medicationComponent) async {
     Database db = await instance.database;

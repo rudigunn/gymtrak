@@ -1,5 +1,7 @@
 import UIKit
 import Flutter
+import awesome_notifications
+import shared_preferences_ios
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {

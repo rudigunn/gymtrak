@@ -5,6 +5,8 @@ class MedicationPlan {
   String name;
   String folder;
   String description;
+  String startDateString;
+  String lastRefreshedDateString;
   bool active;
   List<MedicationComponentPlan> medicationComponentPlans = [];
 
@@ -12,9 +14,11 @@ class MedicationPlan {
     this.id,
     required this.name,
     required this.folder,
+    required this.description,
+    required this.startDateString,
+    required this.lastRefreshedDateString,
     required this.active,
     required this.medicationComponentPlans,
-    required this.description,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,6 +26,8 @@ class MedicationPlan {
       'id': id,
       'name': name,
       'folder': folder,
+      'startDateString': startDateString,
+      'lastRefreshedDateString': lastRefreshedDateString,
       'active': active,
       'description': description,
       'medicationComponentPlanMap':
@@ -34,6 +40,8 @@ class MedicationPlan {
       id: map['id'],
       name: map['name'],
       folder: map['folder'],
+      startDateString: map['startDateString'],
+      lastRefreshedDateString: map['lastRefreshedDateString'],
       active: map['active'],
       description: map['description'],
       medicationComponentPlans: List<MedicationComponentPlan>.from(
