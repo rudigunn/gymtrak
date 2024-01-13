@@ -5,10 +5,8 @@ import 'package:gymtrak/utilities/medication/medication_plan.dart';
 import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/databases/general_database.dart';
 import 'package:gymtrak/utilities/databases/medication_database.dart';
-import 'package:gymtrak/utilities/misc/notification_service.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:sembast/sembast.dart';
 
 class UserMedicationPage extends StatefulWidget {
   const UserMedicationPage({super.key});
