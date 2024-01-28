@@ -1,7 +1,7 @@
-import 'package:gymtrak/utilities/bloodwork/bloodwork_category.dart';
-import 'package:gymtrak/utilities/bloodwork/bloodwork_parameter.dart';
-import 'package:gymtrak/utilities/medication/medication_component.dart';
-import 'package:gymtrak/utilities/medication/medication_category.dart';
+import 'package:gymtrak/utilities/bloodwork/dataclasses/bloodwork_category.dart';
+import 'package:gymtrak/utilities/bloodwork/dataclasses/bloodwork_parameter.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_component.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_category.dart';
 
 List<BloodWorkParameter> parametersInitial = [
   // A

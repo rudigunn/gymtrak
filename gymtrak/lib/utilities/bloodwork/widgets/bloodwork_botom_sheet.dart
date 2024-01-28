@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gymtrak/utilities/bloodwork/bloodwork_parameter.dart';
+import 'package:gymtrak/utilities/bloodwork/dataclasses/bloodwork_parameter.dart';
 import 'package:gymtrak/utilities/databases/general_database.dart';
 import 'package:gymtrak/utilities/misc/initial_values.dart';
 import 'package:intl/intl.dart';
-import 'package:gymtrak/utilities/bloodwork/bloodwork_category.dart';
-import 'package:gymtrak/utilities/bloodwork/bloodwork_result.dart';
+import 'package:gymtrak/utilities/bloodwork/dataclasses/bloodwork_category.dart';
+import 'package:gymtrak/utilities/bloodwork/dataclasses/bloodwork_result.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class BottomSheetWidget extends StatefulWidget {

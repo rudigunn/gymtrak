@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:gymtrak/utilities/bloodwork/bloodwork_result.dart';
+import 'package:gymtrak/utilities/bloodwork/dataclasses/bloodwork_result.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';

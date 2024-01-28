@@ -1,4 +1,4 @@
-import 'package:gymtrak/utilities/medication/medication_component_plan.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_component_plan.dart';
 
 class MedicationPlan {
   int? id;
@@ -30,8 +30,7 @@ class MedicationPlan {
       'lastRefreshedDateString': lastRefreshedDateString,
       'active': active,
       'description': description,
-      'medicationComponentPlanMap':
-          medicationComponentPlans.map((e) => e.toMap()).toList(),
+      'medicationComponentPlanMap': medicationComponentPlans.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -45,8 +44,7 @@ class MedicationPlan {
       active: map['active'],
       description: map['description'],
       medicationComponentPlans: List<MedicationComponentPlan>.from(
-          map['medicationComponentPlanMap']
-              .map((e) => MedicationComponentPlan.fromMap(e))),
+          map['medicationComponentPlanMap'].map((e) => MedicationComponentPlan.fromMap(e))),
     );
   }
 }

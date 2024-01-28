@@ -1,5 +1,5 @@
-import 'package:gymtrak/utilities/bloodwork/bloodwork_parameter.dart';
-import 'package:gymtrak/utilities/medication/medication_component.dart';
+import 'package:gymtrak/utilities/bloodwork/dataclasses/bloodwork_parameter.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_component.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 

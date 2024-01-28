@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gymtrak/utilities/bloodwork/bloodwork_botom_sheet.dart';
-import 'package:gymtrak/utilities/bloodwork/bloodwork_result.dart';
+import 'package:gymtrak/utilities/bloodwork/widgets/bloodwork_botom_sheet.dart';
+import 'package:gymtrak/utilities/bloodwork/dataclasses/bloodwork_result.dart';
 import 'package:gymtrak/utilities/databases/bloodwork_database.dart';
 import 'package:gymtrak/utilities/databases/general_database.dart';
 import 'package:intl/intl.dart';

@@ -1,4 +1,4 @@
-import 'package:gymtrak/utilities/medication/medication_component.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_component.dart';
 
 class MedicationEntry {
   int? id;

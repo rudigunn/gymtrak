@@ -1,4 +1,4 @@
-import 'package:gymtrak/utilities/medication/medication_component.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_component.dart';
 
 class MedicationComponentPlan {
   double dosage;
@@ -40,13 +40,11 @@ class MedicationComponentPlan {
       type: map['type'],
       time: map['time'],
       frequency: map['frequency'],
-      notificationIdsToDates: map['notificationIdsAndDates'] == null
-          ? {}
-          : Map<int, String>.from(map['notificationIdsAndDates']),
+      notificationIdsToDates:
+          map['notificationIdsAndDates'] == null ? {} : Map<int, String>.from(map['notificationIdsAndDates']),
       intakeDays: List<String>.from(map['intakeDays']),
       notificationIds: List<int>.from(map['notificationIds']),
-      medicationComponent:
-          MedicationComponent.fromMap(map['medicationComponent']),
+      medicationComponent: MedicationComponent.fromMap(map['medicationComponent']),
     );
   }
 }
