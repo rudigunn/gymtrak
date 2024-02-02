@@ -187,7 +187,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                             name: state.planName,
                             folder: state.selectedFolder,
                             startDateString: state.planStartDate.toIso8601String(),
-                            lastRefreshedDateString: '',
+                            lastRefreshedDateString: state.planLastRefreshedDateString ?? '',
                             active: true,
                             medicationComponentPlans: componentPlans,
                             description: '',
@@ -345,6 +345,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                         itemCount:
                             plan.medicationComponentPlans.length > 3 ? 3 + 1 : plan.medicationComponentPlans.length,
                         itemBuilder: (context, componentIndex) {
+                          debugPrint("In Block Function");
+                          plan.printFieldTypes();
                           if (componentIndex >= 3) {
                             return const Text("...", style: TextStyle(fontSize: 14));
                           }
@@ -602,120 +604,131 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   Future<void> handleMedicationPlan(MedicationPlan? medicationPlan) async {
     if (medicationPlan == null) return;
 
-    int planId;
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) async {
-      if (!isAllowed) {
-        await AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
+    await _checkAndRequestNotificationPermission();
     String localTimeZone = await AwesomeNotifications().getLocalTimeZoneIdentifier();
-
-    if (medicationPlan.id == null) {
-      planId = await MedicationDatabaseHelper.instance.insertMedicationPlan(medicationPlan);
-      medicationPlan.id = planId;
-    } else {
-      planId = medicationPlan.id!;
-      await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
-      await cancelExistingNotifications(planId);
-    }
+    await _insertOrUpdateMedicationPlan(medicationPlan);
 
     DateTime now = DateTime.now();
     DateTime startDate = DateTime.parse(medicationPlan.startDateString);
 
     for (MedicationComponentPlan componentPlan in medicationPlan.medicationComponentPlans) {
       TimeOfDay timeOfDay = _convertStringToTimeOfDay(componentPlan.time);
-      if (componentPlan.frequency != 0) {
-        // Schedule notifictaions for each interval
-        // First check if there are schedule notifications
-        int numberOfNotifictionsToAdd = 0;
-        if (componentPlan.notificationIdsToDates.isNotEmpty) {
-          // check which of them are scheduled for the future
-          for (MapEntry<int, String> entry in componentPlan.notificationIdsToDates.entries) {
-            DateTime notificationDate = DateTime.parse(entry.value);
-            if (notificationDate.isAfter(now)) {
-              // starting from this date 7 new notifications should be added
-              startDate = notificationDate;
-              break;
-            } else {
-              // notifictation is in the past so the id should be removed from the database
-              componentPlan.notificationIdsToDates.remove(entry.key);
-              numberOfNotifictionsToAdd++;
-            }
-          }
-        } else {
-          numberOfNotifictionsToAdd = 20;
-        }
-        List<int> notificationIds =
-            await MedicationDatabaseHelper.instance.getNotificationIds(numberOfNotifictionsToAdd);
-
-        // add new notifications
-        for (int i = 1; i <= numberOfNotifictionsToAdd; i++) {
-          await AwesomeNotifications().createNotification(
-            content: NotificationContent(
-              id: notificationIds[i - 1],
-              channelKey: 'medication_reminder',
-              actionType: ActionType.DisabledAction,
-              title: 'Medication reminder',
-              body: 'You have a medication to take!',
-              category: NotificationCategory.Reminder,
-            ),
-            schedule: NotificationCalendar(
-              allowWhileIdle: true,
-              repeats: false,
-              year: startDate.year,
-              month: startDate.month,
-              day: startDate.day,
-              hour: timeOfDay.hour,
-              minute: timeOfDay.minute,
-              second: 0,
-              timeZone: localTimeZone,
-            ),
-          );
-          startDate = startDate.add(Duration(days: i * componentPlan.frequency.toInt()));
-        }
-      } else {
-        List<int> notificationIds =
-            await MedicationDatabaseHelper.instance.getNotificationIds(componentPlan.intakeDays.length);
-
-        Map<String, int> daysToInts = {
-          'Monday': DateTime.monday,
-          'Tuesday': DateTime.tuesday,
-          'Wednesday': DateTime.wednesday,
-          'Thursday': DateTime.thursday,
-          'Friday': DateTime.friday,
-          'Saturday': DateTime.saturday,
-          'Sunday': DateTime.sunday,
-        };
-
-        for (int i = 0; i < componentPlan.intakeDays.length; i++) {
-          await AwesomeNotifications().createNotification(
-            content: NotificationContent(
-              id: notificationIds[i],
-              channelKey: 'medication_reminder',
-              actionType: ActionType.DisabledAction,
-              title: 'Medication reminder',
-              body: 'You have a medication to take!',
-              category: NotificationCategory.Reminder,
-            ),
-            schedule: NotificationCalendar(
-              allowWhileIdle: true,
-              repeats: false,
-              weekday: daysToInts[componentPlan.intakeDays[i]],
-              hour: timeOfDay.hour,
-              minute: timeOfDay.minute,
-              second: 0,
-              timeZone: localTimeZone,
-            ),
-          );
-        }
-      }
+      await _scheduleNotificationsForComponentPlan(componentPlan, now, startDate, timeOfDay, localTimeZone);
     }
 
     medicationPlan.lastRefreshedDateString = DateTime.now().toIso8601String();
-
-    // Save the updated MedicationPlan with notification IDs
     await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
+    _updatePlansList(medicationPlan);
+  }
 
+  Future<void> _checkAndRequestNotificationPermission() async {
+    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    if (!isAllowed) {
+      await AwesomeNotifications().requestPermissionToSendNotifications();
+    }
+  }
+
+  Future<void> _insertOrUpdateMedicationPlan(MedicationPlan medicationPlan) async {
+    await MedicationDatabaseHelper.instance.getAllMedicationPlans().then((value) => debugPrint(value.toString()));
+    debugPrint('--------------------');
+    if (medicationPlan.id == null) {
+      int planId = await MedicationDatabaseHelper.instance.insertMedicationPlan(medicationPlan);
+      medicationPlan.id = planId;
+      await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
+    } else {
+      await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
+      await cancelExistingNotifications(medicationPlan.id!);
+    }
+    await MedicationDatabaseHelper.instance.getAllMedicationPlans().then((value) => debugPrint(value.toString()));
+    debugPrint('--------------------');
+  }
+
+  Future<void> _scheduleNotificationsForComponentPlan(MedicationComponentPlan componentPlan, DateTime now,
+      DateTime startDate, TimeOfDay timeOfDay, String localTimeZone) async {
+    if (componentPlan.frequency != 0) {
+      int numberOfNotifictionsToAdd = 0;
+      if (componentPlan.notificationIdsToDates.isNotEmpty) {
+        for (MapEntry<int, String> entry in componentPlan.notificationIdsToDates.entries) {
+          DateTime notificationDate = DateTime.parse(entry.value);
+          if (notificationDate.isAfter(now)) {
+            startDate = notificationDate;
+            break;
+          } else {
+            componentPlan.notificationIdsToDates.remove(entry.key);
+            await MedicationDatabaseHelper.instance.deleteNotificationIds([entry.key]);
+            numberOfNotifictionsToAdd++;
+          }
+        }
+      } else {
+        numberOfNotifictionsToAdd = 20;
+      }
+      List<int> notificationIds = await MedicationDatabaseHelper.instance.getNotificationIds(numberOfNotifictionsToAdd);
+
+      for (int i = 1; i <= numberOfNotifictionsToAdd; i++) {
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: notificationIds[i - 1],
+            channelKey: 'medication_reminder',
+            actionType: ActionType.DisabledAction,
+            title: 'Medication reminder',
+            body: 'You have a medication to take!',
+            category: NotificationCategory.Reminder,
+          ),
+          schedule: NotificationCalendar(
+            allowWhileIdle: true,
+            repeats: false,
+            year: startDate.year,
+            month: startDate.month,
+            day: startDate.day,
+            hour: timeOfDay.hour,
+            minute: timeOfDay.minute,
+            second: 0,
+            timeZone: localTimeZone,
+          ),
+        );
+        componentPlan.notificationIdsToDates[notificationIds[i - 1]] = startDate.toIso8601String();
+        startDate = startDate.add(Duration(days: i * componentPlan.frequency.toInt()));
+      }
+    } else {
+      List<int> notificationIds =
+          await MedicationDatabaseHelper.instance.getNotificationIds(componentPlan.intakeDays.length);
+
+      Map<String, int> daysToInts = {
+        'Monday': DateTime.monday,
+        'Tuesday': DateTime.tuesday,
+        'Wednesday': DateTime.wednesday,
+        'Thursday': DateTime.thursday,
+        'Friday': DateTime.friday,
+        'Saturday': DateTime.saturday,
+        'Sunday': DateTime.sunday,
+      };
+
+      for (int i = 0; i < componentPlan.intakeDays.length; i++) {
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: notificationIds[i],
+            channelKey: 'medication_reminder',
+            actionType: ActionType.DisabledAction,
+            title: 'Medication reminder',
+            body: 'You have a medication to take!',
+            category: NotificationCategory.Reminder,
+          ),
+          schedule: NotificationCalendar(
+            allowWhileIdle: true,
+            repeats: false,
+            weekday: daysToInts[componentPlan.intakeDays[i]],
+            hour: timeOfDay.hour,
+            minute: timeOfDay.minute,
+            second: 0,
+            timeZone: localTimeZone,
+          ),
+        );
+        componentPlan.notificationIdsToDates[notificationIds[i]] = startDate.toIso8601String();
+      }
+    }
+  }
+
+  void _updatePlansList(MedicationPlan medicationPlan) {
     setState(() {
       if (plans.any((element) => element.id == medicationPlan.id)) {
         plans[plans.indexWhere((element) => element.id == medicationPlan.id)] = medicationPlan;
@@ -730,8 +743,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
     List<MedicationComponentPlan> components = medicationPlan?.medicationComponentPlans ?? [];
     for (MedicationComponentPlan component in components) {
-      if (component.notificationIds.isNotEmpty) {
-        for (int notificationId in component.notificationIds) {
+      if (component.notificationIdsToDates.isNotEmpty) {
+        for (int notificationId in component.notificationIdsToDates.keys) {
           await AwesomeNotifications().cancel(notificationId);
         }
       }

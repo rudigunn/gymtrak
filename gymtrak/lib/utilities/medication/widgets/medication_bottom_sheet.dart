@@ -26,6 +26,7 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
   late String planName;
   DateTime planStartDate = DateTime.now();
   String? planStartDateString;
+  String? planLastRefreshedDateString;
   String selectedFolder = 'Select a folder';
 
   List<String> selectedCategories = [];
@@ -47,6 +48,7 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
     planId = widget.existingPlan?.id;
     planName = widget.existingPlan?.name ?? '';
     planNameController.text = planName;
+    planLastRefreshedDateString = widget.existingPlan?.lastRefreshedDateString ?? '';
     selectedFolder = widget.existingPlan?.folder ?? 'Select a folder';
     componentPlans = widget.existingPlan?.medicationComponentPlans ?? [];
     planStartDate = DateTime.now();
@@ -321,7 +323,6 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
                           frequency: selectedInterval > 0 ? selectedInterval.toDouble() : 0.0,
                           notificationIdsToDates: {},
                           intakeDays: daysSelected.keys.where((day) => daysSelected[day]!).toList(),
-                          notificationIds: [],
                           medicationComponent: component,
                         );
 

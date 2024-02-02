@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/medication/dataclasses/medication_component_plan.dart';
 
 class MedicationPlan {
@@ -23,7 +24,7 @@ class MedicationPlan {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'id': id.toString(),
       'name': name,
       'folder': folder,
       'startDateString': startDateString,
@@ -35,16 +36,34 @@ class MedicationPlan {
   }
 
   factory MedicationPlan.fromMap(Map<String, dynamic> map) {
+    final id = map['id'] == null ? null : int.tryParse(map['id']);
+    debugPrint(map['id']);
+    if (id == null && map['id'] != null) {
+      throw FormatException('Invalid format for id: ${map['id']}');
+    }
+
     return MedicationPlan(
-      id: map['id'],
+      id: id,
       name: map['name'],
       folder: map['folder'],
       startDateString: map['startDateString'],
       lastRefreshedDateString: map['lastRefreshedDateString'],
       active: map['active'],
       description: map['description'],
-      medicationComponentPlans: List<MedicationComponentPlan>.from(
-          map['medicationComponentPlanMap'].map((e) => MedicationComponentPlan.fromMap(e))),
+      medicationComponentPlans: (map['medicationComponentPlanMap'] as List<dynamic>)
+          .map((e) => MedicationComponentPlan.fromMap(e as Map<String, dynamic>))
+          .toList(),
     );
+  }
+
+  void printFieldTypes() {
+    debugPrint('id: ${id.runtimeType}');
+    debugPrint('name: ${name.runtimeType}');
+    debugPrint('folder: ${folder.runtimeType}');
+    debugPrint('description: ${description.runtimeType}');
+    debugPrint('startDateString: ${startDateString.runtimeType}');
+    debugPrint('lastRefreshedDateString: ${lastRefreshedDateString.runtimeType}');
+    debugPrint('active: ${active.runtimeType}');
+    debugPrint('medicationComponentPlans: ${medicationComponentPlans.runtimeType}');
   }
 }

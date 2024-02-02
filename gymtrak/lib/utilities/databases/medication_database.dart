@@ -69,6 +69,7 @@ class MedicationDatabaseHelper {
   Future<int> updateMedicationPlan(MedicationPlan medicationPlan) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationPlans);
+    debugPrint(medicationPlan.toMap().toString());
     return await store.update(db, medicationPlan.toMap(), finder: Finder(filter: Filter.byKey(medicationPlan.id)));
   }
 
