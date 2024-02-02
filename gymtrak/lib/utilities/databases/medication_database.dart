@@ -16,7 +16,8 @@ class MedicationDatabaseHelper {
 
   // Singleton class setup
   MedicationDatabaseHelper._privateConstructor();
-  static final MedicationDatabaseHelper instance = MedicationDatabaseHelper._privateConstructor();
+  static final MedicationDatabaseHelper instance =
+      MedicationDatabaseHelper._privateConstructor();
 
   // Single database reference
   static Database? _database;
@@ -66,17 +67,20 @@ class MedicationDatabaseHelper {
     return MedicationPlan.fromMap(recordValue);
   }
 
-  Future<int> updateMedicationPlan(MedicationPlan medicationPlan) async {
+  Future<void> updateMedicationPlan(MedicationPlan medicationPlan) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationPlans);
     debugPrint(medicationPlan.toMap().toString());
-    return await store.update(db, medicationPlan.toMap(), finder: Finder(filter: Filter.byKey(medicationPlan.id)));
+    debugPrint(medicationPlan.id.runtimeType.toString());
+    var record = store.record(medicationPlan.id!);
+    await record.update(db, medicationPlan.toMap());
   }
 
   Future<int> deleteMedicationPlan(MedicationPlan medicationPlan) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationPlans);
-    return await store.delete(db, finder: Finder(filter: Filter.byKey(medicationPlan.id)));
+    return await store.delete(db,
+        finder: Finder(filter: Filter.byKey(medicationPlan.id)));
   }
 
   Future<int> deleteMedicationPlanWithId(int id) async {
@@ -105,7 +109,8 @@ class MedicationDatabaseHelper {
     var store = intMapStoreFactory.store(tableNotificationIds);
 
     // Find the highest ID in use
-    var results = await store.find(db, finder: Finder(sortOrders: [SortOrder(Field.value, false)], limit: 1));
+    var results = await store.find(db,
+        finder: Finder(sortOrders: [SortOrder(Field.value, false)], limit: 1));
 
     int highestId = 0;
     debugPrint(results.toString());
@@ -133,11 +138,13 @@ class MedicationDatabaseHelper {
     var store = intMapStoreFactory.store(tableNotificationIds);
 
     for (int i = 0; i < notificationIds.length; i++) {
-      await store.delete(db, finder: Finder(filter: Filter.byKey(notificationIds[i])));
+      await store.delete(db,
+          finder: Finder(filter: Filter.byKey(notificationIds[i])));
     }
   }
 
-  Future<int> insertMedicationComponent(MedicationComponent medicationComponent) async {
+  Future<int> insertMedicationComponent(
+      MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
     return await store.add(db, medicationComponent.toMap());
@@ -157,17 +164,20 @@ class MedicationDatabaseHelper {
     return MedicationComponent.fromMap(recordValue);
   }
 
-  Future<int> updateMedicationComponent(MedicationComponent medicationComponent) async {
+  Future<int> updateMedicationComponent(
+      MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
     return await store.update(db, medicationComponent.toMap(),
         finder: Finder(filter: Filter.byKey(medicationComponent.id)));
   }
 
-  Future<int> deleteMedicationComponent(MedicationComponent medicationComponent) async {
+  Future<int> deleteMedicationComponent(
+      MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
-    return await store.delete(db, finder: Finder(filter: Filter.byKey(medicationComponent.id)));
+    return await store.delete(db,
+        finder: Finder(filter: Filter.byKey(medicationComponent.id)));
   }
 
   Future<int> deleteMedicationComponentWithId(int id) async {

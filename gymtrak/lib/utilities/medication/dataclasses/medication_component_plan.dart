@@ -25,7 +25,8 @@ class MedicationComponentPlan {
       'type': type,
       'time': time,
       'frequency': frequency,
-      'notificatinIdsToDates': notificationIdsToDates,
+      'notificatinIdsToDates': notificationIdsToDates
+          .map((key, value) => MapEntry(key.toString(), value)),
       'intakeDays': intakeDays,
       'medicationComponent': medicationComponent.toMap(),
     };
@@ -37,10 +38,12 @@ class MedicationComponentPlan {
       type: map['type'],
       time: map['time'],
       frequency: map['frequency'],
-      notificationIdsToDates:
-          map['notificationIdsAndDates'] == null ? {} : Map<int, String>.from(map['notificationIdsAndDates']),
+      notificationIdsToDates: map['notificationIdsAndDates'] == null
+          ? {}
+          : Map<int, String>.from(map['notificationIdsAndDates']),
       intakeDays: List<String>.from(map['intakeDays']),
-      medicationComponent: MedicationComponent.fromMap(map['medicationComponent']),
+      medicationComponent:
+          MedicationComponent.fromMap(map['medicationComponent']),
     );
   }
 }
