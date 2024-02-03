@@ -415,11 +415,12 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                       ),
                       _buildDialogButton(
                         text: 'Delete',
-                        onPressed: () {
+                        onPressed: () async {
+                          await cancelExistingNotifications(plan.id!);
+                          await MedicationDatabaseHelper.instance.deleteMedicationPlan(plan);
                           setState(() {
                             Navigator.pop(context);
                             plans.removeAt(index);
-                            MedicationDatabaseHelper.instance.deleteMedicationPlanWithId(plan.id!);
                           });
                         },
                       ),
@@ -613,8 +614,10 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     DateTime startDate = DateTime.parse(medicationPlan.startDateString);
 
     for (MedicationComponentPlan componentPlan in medicationPlan.medicationComponentPlans) {
-      TimeOfDay timeOfDay = _convertStringToTimeOfDay(componentPlan.time);
-      await _scheduleNotificationsForComponentPlan(componentPlan, now, startDate, timeOfDay, localTimeZone);
+      if (componentPlan.notificationsEnabled) {
+        TimeOfDay timeOfDay = _convertStringToTimeOfDay(componentPlan.time);
+        await _scheduleNotificationsForComponentPlan(componentPlan, now, startDate, timeOfDay, localTimeZone);
+      }
     }
 
     medicationPlan.lastRefreshedDateString = DateTime.now().toIso8601String();
@@ -740,10 +743,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
     List<MedicationComponentPlan> components = medicationPlan?.medicationComponentPlans ?? [];
     for (MedicationComponentPlan component in components) {
-      if (component.notificationIdsToDates.isNotEmpty) {
-        for (int notificationId in component.notificationIdsToDates.keys) {
-          await AwesomeNotifications().cancel(notificationId);
-        }
+      for (int notificationId in component.notificationIdsToDates.keys) {
+        await AwesomeNotifications().cancel(notificationId);
       }
     }
   }
@@ -752,7 +753,9 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     List<MedicationPlan> allPlans = await MedicationDatabaseHelper.instance.getAllMedicationPlans();
 
     for (MedicationPlan plan in allPlans) {
-      await handleMedicationPlan(plan);
+      if (plan.active) {
+        await handleMedicationPlan(plan);
+      }
     }
   }
 }
