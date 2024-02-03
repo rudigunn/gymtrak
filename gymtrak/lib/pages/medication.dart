@@ -669,10 +669,6 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
   Future<void> _insertOrUpdateMedicationPlan(
       MedicationPlan medicationPlan) async {
-    await MedicationDatabaseHelper.instance
-        .getAllMedicationPlans()
-        .then((value) => debugPrint(value.toString()));
-    debugPrint('--------------------');
     if (medicationPlan.id == null) {
       int planId = await MedicationDatabaseHelper.instance
           .insertMedicationPlan(medicationPlan);
@@ -684,10 +680,6 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
           .updateMedicationPlan(medicationPlan);
       await cancelExistingNotifications(medicationPlan.id!);
     }
-    await MedicationDatabaseHelper.instance
-        .getAllMedicationPlans()
-        .then((value) => debugPrint(value.toString()));
-    debugPrint('--------------------');
   }
 
   Future<void> _scheduleNotificationsForComponentPlan(
@@ -713,7 +705,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
           }
         }
       } else {
-        numberOfNotifictionsToAdd = 20;
+        numberOfNotifictionsToAdd = 7;
       }
       List<int> notificationIds = await MedicationDatabaseHelper.instance
           .getNotificationIds(numberOfNotifictionsToAdd);

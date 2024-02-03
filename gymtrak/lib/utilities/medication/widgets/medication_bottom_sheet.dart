@@ -15,13 +15,16 @@ class MedicationBottomSheetWidget extends StatefulWidget {
   final List<String> folders;
   final MedicationPlan? existingPlan;
 
-  const MedicationBottomSheetWidget({super.key, required this.folders, this.existingPlan});
+  const MedicationBottomSheetWidget(
+      {super.key, required this.folders, this.existingPlan});
 
   @override
-  MedicationBottomSheetWidgetState createState() => MedicationBottomSheetWidgetState();
+  MedicationBottomSheetWidgetState createState() =>
+      MedicationBottomSheetWidgetState();
 }
 
-class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget> {
+class MedicationBottomSheetWidgetState
+    extends State<MedicationBottomSheetWidget> {
   int? planId;
   late String planName;
   DateTime planStartDate = DateTime.now();
@@ -48,7 +51,8 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
     planId = widget.existingPlan?.id;
     planName = widget.existingPlan?.name ?? '';
     planNameController.text = planName;
-    planLastRefreshedDateString = widget.existingPlan?.lastRefreshedDateString ?? '';
+    planLastRefreshedDateString =
+        widget.existingPlan?.lastRefreshedDateString ?? '';
     selectedFolder = widget.existingPlan?.folder ?? 'Select a folder';
     componentPlans = widget.existingPlan?.medicationComponentPlans ?? [];
     planStartDate = DateTime.now();
@@ -172,7 +176,8 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         final component = filteredComponents[index];
-        MedicationComponentPlan? matchingComponentPlan = componentPlans.firstWhereOrNull(
+        MedicationComponentPlan? matchingComponentPlan =
+            componentPlans.firstWhereOrNull(
           (element) => element.medicationComponent.id == component.id,
         );
 
@@ -182,25 +187,31 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
           title: Text(component.name),
           subtitle: Text(component.fullName),
           trailing: matchingComponentPlan != null
-              ? Text('$componentDosage ${component.unit}', style: const TextStyle(fontSize: 16, color: Colors.black54))
+              ? Text('$componentDosage ${component.unit}',
+                  style: const TextStyle(fontSize: 16, color: Colors.black54))
               : IconButton(
                   icon: const Icon(Symbols.arrow_right),
-                  onPressed: () => _showComponentInput(context, component, matchingComponentPlan),
+                  onPressed: () => _showComponentInput(
+                      context, component, matchingComponentPlan),
                 ),
-          onTap: () => _showComponentInput(context, component, matchingComponentPlan),
+          onTap: () =>
+              _showComponentInput(context, component, matchingComponentPlan),
         );
       },
     );
   }
 
   Future<void> _loadComponents() async {
-    List<MedicationComponent> loadedComponents = await MedicationDatabaseHelper.instance.getAllMedicationComponents();
+    List<MedicationComponent> loadedComponents =
+        await MedicationDatabaseHelper.instance.getAllMedicationComponents();
 
     if (loadedComponents.isEmpty) {
       for (MedicationComponent component in componentsInitial) {
-        await MedicationDatabaseHelper.instance.insertMedicationComponent(component);
+        await MedicationDatabaseHelper.instance
+            .insertMedicationComponent(component);
       }
-      loadedComponents = await MedicationDatabaseHelper.instance.getAllMedicationComponents();
+      loadedComponents =
+          await MedicationDatabaseHelper.instance.getAllMedicationComponents();
     }
 
     setState(() {
@@ -212,7 +223,8 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
     String searchTerm = searchController.text.toLowerCase();
 
     return components.where((component) {
-      return (selectedCategories.isEmpty || selectedCategories.contains(component.category)) &&
+      return (selectedCategories.isEmpty ||
+              selectedCategories.contains(component.category)) &&
           (searchTerm.isEmpty ||
               component.name.toLowerCase().startsWith(searchTerm) ||
               component.fullName.toLowerCase().startsWith(searchTerm));
@@ -225,7 +237,8 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
       padding: const EdgeInsets.all(8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: categories.map((category) => _buildFilterChip(category)).toList(),
+        children:
+            categories.map((category) => _buildFilterChip(category)).toList(),
       ),
     );
   }
@@ -267,9 +280,10 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
     );
   }
 
-  void _showComponentInput(
-      BuildContext context, MedicationComponent component, MedicationComponentPlan? medicationComponentPlan) async {
-    MedicationComponentPlan? componentPlan = await showModalBottomSheet<MedicationComponentPlan>(
+  void _showComponentInput(BuildContext context, MedicationComponent component,
+      MedicationComponentPlan? medicationComponentPlan) async {
+    MedicationComponentPlan? componentPlan =
+        await showModalBottomSheet<MedicationComponentPlan>(
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
@@ -287,17 +301,20 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
                   IconButton(
                     icon: const Icon(Icons.check),
                     onPressed: () {
-                      MedicationInputSheetState? state = medicationInputKey.currentState;
+                      MedicationInputSheetState? state =
+                          medicationInputKey.currentState;
                       if (state != null) {
                         double? dosage = state.dosage;
                         String? selectedType = state.selectedType;
                         String? timeString = state.timeString;
                         int selectedInterval = state.selectedInterval;
+                        bool notificationsEnabled = state.notificationsEnabled;
                         Map<String, bool> daysSelected = state.daysSelected;
 
                         if (dosage == null || dosage <= 0) {
                           debugPrint(state.dosage.toString());
-                          _showErrorDialog(context, 'Please enter a valid dosage.');
+                          _showErrorDialog(
+                              context, 'Please enter a valid dosage.');
                           return;
                         }
 
@@ -307,22 +324,31 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
                         }
 
                         if (timeString == null || timeString.isEmpty) {
-                          _showErrorDialog(context, 'Please select a time for intake.');
+                          _showErrorDialog(
+                              context, 'Please select a time for intake.');
                           return;
                         }
 
-                        if (selectedInterval == 0 && !daysSelected.containsValue(true)) {
-                          _showErrorDialog(context, 'Please select a regular interval or specific days.');
+                        if (selectedInterval == 0 &&
+                            !daysSelected.containsValue(true)) {
+                          _showErrorDialog(context,
+                              'Please select a regular interval or specific days.');
                           return;
                         }
 
-                        MedicationComponentPlan componentPlan = MedicationComponentPlan(
+                        MedicationComponentPlan componentPlan =
+                            MedicationComponentPlan(
                           dosage: dosage,
                           type: selectedType,
                           time: timeString,
-                          frequency: selectedInterval > 0 ? selectedInterval.toDouble() : 0.0,
+                          frequency: selectedInterval > 0
+                              ? selectedInterval.toDouble()
+                              : 0.0,
+                          notificationsEnabled: notificationsEnabled,
                           notificationIdsToDates: {},
-                          intakeDays: daysSelected.keys.where((day) => daysSelected[day]!).toList(),
+                          intakeDays: daysSelected.keys
+                              .where((day) => daysSelected[day]!)
+                              .toList(),
                           medicationComponent: component,
                         );
 
@@ -333,7 +359,9 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
                 ],
               ),
               body: MedicationInputSheet(
-                  key: medicationInputKey, component: component, componentPlan: medicationComponentPlan),
+                  key: medicationInputKey,
+                  component: component,
+                  componentPlan: medicationComponentPlan),
             ),
           ),
         );
@@ -342,8 +370,11 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
 
     if (componentPlan != null) {
       setState(() {
-        MedicationComponentPlan? existingComponentPlan = componentPlans.firstWhereOrNull(
-          (element) => element.medicationComponent.id == componentPlan.medicationComponent.id,
+        MedicationComponentPlan? existingComponentPlan =
+            componentPlans.firstWhereOrNull(
+          (element) =>
+              element.medicationComponent.id ==
+              componentPlan.medicationComponent.id,
         );
         if (existingComponentPlan != null) {
           componentPlans.remove(existingComponentPlan);
@@ -379,7 +410,8 @@ class MedicationInputSheet extends StatefulWidget {
   final MedicationComponent component;
   final MedicationComponentPlan? componentPlan;
 
-  const MedicationInputSheet({super.key, required this.component, required this.componentPlan});
+  const MedicationInputSheet(
+      {super.key, required this.component, required this.componentPlan});
 
   @override
   MedicationInputSheetState createState() => MedicationInputSheetState();
@@ -390,6 +422,7 @@ class MedicationInputSheetState extends State<MedicationInputSheet> {
   String? selectedType;
   String? timeString;
   int selectedInterval = 0;
+  bool notificationsEnabled = false;
   Map<String, bool> daysSelected = {
     'Monday': false,
     'Tuesday': false,
@@ -412,7 +445,10 @@ class MedicationInputSheetState extends State<MedicationInputSheet> {
       textEditingController.text = widget.componentPlan!.dosage.toString();
       selectedType = widget.componentPlan!.type;
       timeString = widget.componentPlan!.time;
-      selectedInterval = widget.componentPlan!.frequency == 0 ? 0 : (widget.componentPlan!.frequency / 24).round();
+      notificationsEnabled = widget.componentPlan!.notificationsEnabled;
+      selectedInterval = widget.componentPlan!.frequency == 0
+          ? 0
+          : (widget.componentPlan!.frequency).round();
       for (String day in widget.componentPlan!.intakeDays) {
         daysSelected[day] = true;
       }
@@ -436,6 +472,8 @@ class MedicationInputSheetState extends State<MedicationInputSheet> {
               _buildTypeSelector(),
               const SizedBox(height: 20),
               _buildTimePickerWidget(),
+              const SizedBox(height: 20),
+              _buildEnableNotificationsSelected(),
               const SizedBox(height: 20),
               _buildRegularIntervalSelectorWidget(),
               const SizedBox(height: 20),
@@ -490,7 +528,8 @@ class MedicationInputSheetState extends State<MedicationInputSheet> {
         onExpansionChanged: (value) {
           if (value) {
             if (daysSelected.containsValue(true)) {
-              _showErrorDialog(context, 'You have already selected certain days. Please deselect them to continue.');
+              _showErrorDialog(context,
+                  'You have already selected certain days. Please deselect them to continue.');
               regularIntervalController.collapse();
             }
           }
@@ -513,19 +552,22 @@ class MedicationInputSheetState extends State<MedicationInputSheet> {
         }
       }
       if (selectedDaysString.isNotEmpty) {
-        selectedDaysString = selectedDaysString.substring(0, selectedDaysString.length - 2);
+        selectedDaysString =
+            selectedDaysString.substring(0, selectedDaysString.length - 2);
       }
     }
     return Theme(
       data: ThemeData(dividerColor: Colors.black26),
       child: ExpansionTile(
-        title: selectedDaysString.isEmpty ? const Text('Certain Days') : Text('Certain Days: $selectedDaysString'),
+        title: selectedDaysString.isEmpty
+            ? const Text('Certain Days')
+            : Text('Certain Days: $selectedDaysString'),
         controller: certainDaysController,
         onExpansionChanged: (value) {
           if (value) {
             if (selectedInterval > 0) {
-              _showErrorDialog(
-                  context, 'You have already selected a regular interval. Please set it to 0 to continue.');
+              _showErrorDialog(context,
+                  'You have already selected a regular interval. Please set it to 0 to continue.');
               certainDaysController.collapse();
             }
           }
@@ -633,7 +675,9 @@ class MedicationInputSheetState extends State<MedicationInputSheet> {
           child: Text(type),
         );
       }).toList(),
-      hint: selectedType == null ? const Text('Select a type') : Text(selectedType!),
+      hint: selectedType == null
+          ? const Text('Select a type')
+          : Text(selectedType!),
       onChanged: (String? value) {
         setState(() {
           selectedType = value;
@@ -646,9 +690,24 @@ class MedicationInputSheetState extends State<MedicationInputSheet> {
     );
   }
 
+  Widget _buildEnableNotificationsSelected() {
+    return SwitchListTile(
+      title: const Text('Enable Notifications'),
+      subtitle: const Text(
+          'If enabled, the app will send you notifications at the specified days at the specified time'),
+      value: notificationsEnabled,
+      onChanged: (bool value) {
+        setState(() {
+          notificationsEnabled = value;
+        });
+      },
+    );
+  }
+
   String formatTimeOfDay(TimeOfDay timeOfDay, BuildContext context) {
     final now = DateTime.now();
-    final dateTime = DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final dateTime = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
     return DateFormat.jm().format(dateTime); // jm format uses AM/PM
   }
 }
