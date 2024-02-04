@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   bool _showAddOverlay = false;
   bool _isMedicationPageOpen = false;
   bool _isBloodWorkPageOpen = false;
+  bool _isNotificationRefreshed = false;
 
   final List<Widget> _pages = [
     const UserDashboardPage(),
@@ -107,11 +108,24 @@ class _HomePageState extends State<HomePage> {
             ? (_isMedicationPageOpen ? _medicationPage : _bloodWorkPage)
             : _pages[_selectedIndex]);
 
-    return Scaffold(
-      body: displayBody,
+    Widget home = Scaffold(
+      body: Stack(
+        children: [
+          displayBody,
+          if (!_isNotificationRefreshed)
+            const Offstage(
+              offstage: true,
+              child: UserMedicationPage(
+                createForBackground: true,
+              ),
+            ),
+        ],
+      ),
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
+    _isNotificationRefreshed = false;
+    return home;
   }
 
   Widget _buildBottomNavigationBar() {

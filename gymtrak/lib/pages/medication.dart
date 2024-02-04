@@ -9,7 +9,8 @@ import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class UserMedicationPage extends StatefulWidget {
-  const UserMedicationPage({super.key});
+  final bool createForBackground;
+  const UserMedicationPage({super.key, this.createForBackground = false});
 
   @override
   State<UserMedicationPage> createState() => _UserMedicationPageState();
@@ -28,6 +29,9 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     super.initState();
     loadData();
     loadFolders();
+    if (widget.createForBackground) {
+      refreshReminders();
+    }
   }
 
   @override
@@ -388,10 +392,10 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Text(plan.active ? 'Set plan to inactive' : 'Set plan to active'),
             ),
-            onTap: () {
+            onTap: () async {
+              await MedicationDatabaseHelper.instance.updateMedicationPlan(plan);
               setState(() {
                 plan.active = !plan.active;
-                MedicationDatabaseHelper.instance.updateMedicationPlan(plan);
               });
             },
           ),
@@ -690,6 +694,12 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
         startDate = startDate.add(Duration(days: i * componentPlan.frequency.toInt()));
       }
     } else {
+      if (componentPlan.notificationIdsToDates.isNotEmpty) {
+        await MedicationDatabaseHelper.instance
+            .deleteNotificationIds(componentPlan.notificationIdsToDates.keys.toList());
+      }
+
+      componentPlan.notificationIdsToDates = {};
       List<int> notificationIds =
           await MedicationDatabaseHelper.instance.getNotificationIds(componentPlan.intakeDays.length);
 
@@ -749,7 +759,7 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     }
   }
 
-  Future<void> refreshReminders() async {
+  void refreshReminders() async {
     List<MedicationPlan> allPlans = await MedicationDatabaseHelper.instance.getAllMedicationPlans();
 
     for (MedicationPlan plan in allPlans) {
@@ -757,5 +767,6 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
         await handleMedicationPlan(plan);
       }
     }
+    debugPrint('Refreshed reminders------------------------');
   }
 }

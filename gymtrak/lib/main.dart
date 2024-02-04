@@ -5,30 +5,14 @@ import 'package:gymtrak/utilities/misc/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AwesomeNotifications().initialize(
-      null,
-      [
-        NotificationChannel(
-          channelKey: 'medication_reminder',
-          channelName: 'Medication Reminders',
-          channelDescription: 'Notification channel for medication reminders',
-          ledColor: Colors.white,
-        ),
-      ],
-      channelGroups: [
-        NotificationChannelGroup(
-            channelGroupKey: 'medication_reminder',
-            channelGroupName: 'Medication group')
-      ],
-      debug: true);
+  await initializeAwesomeNotifications();
   runApp(const MainApp());
 }
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   static const String name = 'Gymtrak';
 
@@ -42,12 +26,9 @@ class MainAppState extends State<MainApp> {
     // Only after at least the action method is set, the notification events are delivered
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod:
-            NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod:
-            NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod:
-            NotificationController.onDismissActionReceivedMethod);
+        onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod);
 
     super.initState();
   }
@@ -87,4 +68,21 @@ class MainAppState extends State<MainApp> {
       home: const HomePage(),
     );
   }
+}
+
+Future<void> initializeAwesomeNotifications() async {
+  await AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+          channelKey: 'medication_reminder',
+          channelName: 'Medication Reminders',
+          channelDescription: 'Notification channel for medication reminders',
+          ledColor: Colors.white,
+        ),
+      ],
+      channelGroups: [
+        NotificationChannelGroup(channelGroupKey: 'medication_reminder', channelGroupName: 'Medication group')
+      ],
+      debug: true);
 }

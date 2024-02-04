@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/medication/dataclasses/medication_component.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_component_plan.dart';
 import 'package:gymtrak/utilities/medication/dataclasses/medication_plan.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -16,8 +19,7 @@ class MedicationDatabaseHelper {
 
   // Singleton class setup
   MedicationDatabaseHelper._privateConstructor();
-  static final MedicationDatabaseHelper instance =
-      MedicationDatabaseHelper._privateConstructor();
+  static final MedicationDatabaseHelper instance = MedicationDatabaseHelper._privateConstructor();
 
   // Single database reference
   static Database? _database;
@@ -77,10 +79,14 @@ class MedicationDatabaseHelper {
   }
 
   Future<int> deleteMedicationPlan(MedicationPlan medicationPlan) async {
+    for (MedicationComponentPlan componentPlan in medicationPlan.medicationComponentPlans) {
+      if (componentPlan.notificationIdsToDates.isNotEmpty) {
+        await deleteNotificationIds(componentPlan.notificationIdsToDates.keys.toList());
+      }
+    }
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationPlans);
-    return await store.delete(db,
-        finder: Finder(filter: Filter.byKey(medicationPlan.id)));
+    return await store.delete(db, finder: Finder(filter: Filter.byKey(medicationPlan.id)));
   }
 
   Future<int> deleteMedicationPlanWithId(int id) async {
@@ -106,28 +112,36 @@ class MedicationDatabaseHelper {
 
   Future<List<int>> getNotificationIds(int count) async {
     Database db = await instance.database;
-    var store = intMapStoreFactory.store(tableNotificationIds);
+    var store = StoreRef.main();
 
-    // Find the highest ID in use
-    var results = await store.find(db,
-        finder: Finder(sortOrders: [SortOrder(Field.value, false)], limit: 1));
+    // Explicitly create a mutable list from the database value
+    var record = await store.record('notificationIds').get(db);
 
-    int highestId = 0;
-    debugPrint(results.toString());
-    if (results.isNotEmpty) {
-      highestId = results.first.value.values.first as int;
+    Map existingIdsMap = {};
+    if (record != null) {
+      existingIdsMap = record as Map;
     }
 
-    // Generate 10 new unique IDs
     List<int> newIds = [];
-    for (int i = 1; i <= count; i++) {
-      newIds.add(highestId + i);
-    }
 
-    // Add the new IDs to the database such that we have Map<int, int>
+    if (existingIdsMap.isEmpty) {
+      for (int i = 1; i <= count; i++) {
+        newIds.add(i);
+      }
+      await store.record('notificationIds').put(db, {'ids': newIds});
+    } else {
+      List<int> mutableExistingIds = List<int>.from(existingIdsMap['ids']);
+      int currentValue = 1;
+      while (newIds.length < count) {
+        if (!existingIdsMap['ids'].contains(currentValue)) {
+          mutableExistingIds.add(currentValue);
+          newIds.add(currentValue);
+        }
+        currentValue++;
+      }
 
-    for (int i = 0; i < newIds.length; i++) {
-      await store.add(db, {newIds[i].toString(): newIds[i]});
+      // Save the updated list back to the database
+      await store.record('notificationIds').update(db, {'ids': mutableExistingIds});
     }
 
     return newIds;
@@ -135,16 +149,25 @@ class MedicationDatabaseHelper {
 
   Future<void> deleteNotificationIds(List<int> notificationIds) async {
     Database db = await instance.database;
-    var store = intMapStoreFactory.store(tableNotificationIds);
+    var store = StoreRef.main();
 
-    for (int i = 0; i < notificationIds.length; i++) {
-      await store.delete(db,
-          finder: Finder(filter: Filter.byKey(notificationIds[i])));
+    // Explicitly create a mutable list from the database value
+    var existingIdsMap = await store.record('notificationIds').get(db) as Map;
+
+    if (existingIdsMap.isEmpty) {
+      return;
     }
+
+    List<int> mutableExistingIds = List<int>.from(existingIdsMap['ids']);
+
+    // Remove the notification IDs that are meant to be deleted
+    mutableExistingIds.removeWhere((id) => notificationIds.contains(id));
+
+    // Save the updated list back to the database
+    await store.record('notificationIds').update(db, {'ids': mutableExistingIds});
   }
 
-  Future<int> insertMedicationComponent(
-      MedicationComponent medicationComponent) async {
+  Future<int> insertMedicationComponent(MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
     return await store.add(db, medicationComponent.toMap());
@@ -164,20 +187,17 @@ class MedicationDatabaseHelper {
     return MedicationComponent.fromMap(recordValue);
   }
 
-  Future<int> updateMedicationComponent(
-      MedicationComponent medicationComponent) async {
+  Future<int> updateMedicationComponent(MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
     return await store.update(db, medicationComponent.toMap(),
         finder: Finder(filter: Filter.byKey(medicationComponent.id)));
   }
 
-  Future<int> deleteMedicationComponent(
-      MedicationComponent medicationComponent) async {
+  Future<int> deleteMedicationComponent(MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
-    return await store.delete(db,
-        finder: Finder(filter: Filter.byKey(medicationComponent.id)));
+    return await store.delete(db, finder: Finder(filter: Filter.byKey(medicationComponent.id)));
   }
 
   Future<int> deleteMedicationComponentWithId(int id) async {
