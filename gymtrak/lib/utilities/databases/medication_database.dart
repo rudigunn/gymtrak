@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/medication/dataclasses/medication_component.dart';
 import 'package:gymtrak/utilities/medication/dataclasses/medication_component_plan.dart';
@@ -19,7 +17,8 @@ class MedicationDatabaseHelper {
 
   // Singleton class setup
   MedicationDatabaseHelper._privateConstructor();
-  static final MedicationDatabaseHelper instance = MedicationDatabaseHelper._privateConstructor();
+  static final MedicationDatabaseHelper instance =
+      MedicationDatabaseHelper._privateConstructor();
 
   // Single database reference
   static Database? _database;
@@ -79,14 +78,17 @@ class MedicationDatabaseHelper {
   }
 
   Future<int> deleteMedicationPlan(MedicationPlan medicationPlan) async {
-    for (MedicationComponentPlan componentPlan in medicationPlan.medicationComponentPlans) {
+    for (MedicationComponentPlan componentPlan
+        in medicationPlan.medicationComponentPlans) {
       if (componentPlan.notificationIdsToDates.isNotEmpty) {
-        await deleteNotificationIds(componentPlan.notificationIdsToDates.keys.toList());
+        await deleteNotificationIds(
+            componentPlan.notificationIdsToDates.keys.toList());
       }
     }
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationPlans);
-    return await store.delete(db, finder: Finder(filter: Filter.byKey(medicationPlan.id)));
+    return await store.delete(db,
+        finder: Finder(filter: Filter.byKey(medicationPlan.id)));
   }
 
   Future<int> deleteMedicationPlanWithId(int id) async {
@@ -141,7 +143,9 @@ class MedicationDatabaseHelper {
       }
 
       // Save the updated list back to the database
-      await store.record('notificationIds').update(db, {'ids': mutableExistingIds});
+      await store
+          .record('notificationIds')
+          .update(db, {'ids': mutableExistingIds});
     }
 
     return newIds;
@@ -164,10 +168,13 @@ class MedicationDatabaseHelper {
     mutableExistingIds.removeWhere((id) => notificationIds.contains(id));
 
     // Save the updated list back to the database
-    await store.record('notificationIds').update(db, {'ids': mutableExistingIds});
+    await store
+        .record('notificationIds')
+        .update(db, {'ids': mutableExistingIds});
   }
 
-  Future<int> insertMedicationComponent(MedicationComponent medicationComponent) async {
+  Future<int> insertMedicationComponent(
+      MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
     return await store.add(db, medicationComponent.toMap());
@@ -187,17 +194,20 @@ class MedicationDatabaseHelper {
     return MedicationComponent.fromMap(recordValue);
   }
 
-  Future<int> updateMedicationComponent(MedicationComponent medicationComponent) async {
+  Future<int> updateMedicationComponent(
+      MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
     return await store.update(db, medicationComponent.toMap(),
         finder: Finder(filter: Filter.byKey(medicationComponent.id)));
   }
 
-  Future<int> deleteMedicationComponent(MedicationComponent medicationComponent) async {
+  Future<int> deleteMedicationComponent(
+      MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
-    return await store.delete(db, finder: Finder(filter: Filter.byKey(medicationComponent.id)));
+    return await store.delete(db,
+        finder: Finder(filter: Filter.byKey(medicationComponent.id)));
   }
 
   Future<int> deleteMedicationComponentWithId(int id) async {
