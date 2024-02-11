@@ -13,7 +13,7 @@ class NotificationController {
   @pragma("vm:entry-point")
   static Future<void> onNotificationDisplayedMethod(
       ReceivedNotification receivedNotification) async {
-    // Your code goes here
+    debugPrint(receivedNotification.toString());
   }
 
   /// Use this method to detect if the user dismissed a notification

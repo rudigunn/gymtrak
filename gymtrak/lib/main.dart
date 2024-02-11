@@ -12,7 +12,8 @@ Future<void> main() async {
 class MainApp extends StatefulWidget {
   const MainApp({super.key});
 
-  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   static const String name = 'Gymtrak';
 
@@ -26,9 +27,12 @@ class MainAppState extends State<MainApp> {
     // Only after at least the action method is set, the notification events are delivered
     AwesomeNotifications().setListeners(
         onActionReceivedMethod: NotificationController.onActionReceivedMethod,
-        onNotificationCreatedMethod: NotificationController.onNotificationCreatedMethod,
-        onNotificationDisplayedMethod: NotificationController.onNotificationDisplayedMethod,
-        onDismissActionReceivedMethod: NotificationController.onDismissActionReceivedMethod);
+        onNotificationCreatedMethod:
+            NotificationController.onNotificationCreatedMethod,
+        onNotificationDisplayedMethod:
+            NotificationController.onNotificationDisplayedMethod,
+        onDismissActionReceivedMethod:
+            NotificationController.onDismissActionReceivedMethod);
 
     super.initState();
   }
@@ -82,7 +86,9 @@ Future<void> initializeAwesomeNotifications() async {
         ),
       ],
       channelGroups: [
-        NotificationChannelGroup(channelGroupKey: 'medication_reminder', channelGroupName: 'Medication group')
+        NotificationChannelGroup(
+            channelGroupKey: 'medication_reminder',
+            channelGroupName: 'Medication group')
       ],
       debug: true);
 }
