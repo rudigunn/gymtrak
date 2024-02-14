@@ -20,7 +20,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   Map<int, String> folders = {};
   List<MedicationPlan> plans = [];
 
-  GlobalKey<MedicationBottomSheetWidgetState> medicationBottomSheetKey = GlobalKey();
+  GlobalKey<MedicationBottomSheetWidgetState> medicationBottomSheetKey =
+      GlobalKey();
 
   final TextEditingController _folderNameController = TextEditingController();
 
@@ -60,7 +61,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 15, color: Colors.white),
+                      textStyle:
+                          const TextStyle(fontSize: 15, color: Colors.white),
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(75, 45),
@@ -91,7 +93,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                       Theme(
                         data: ThemeData(splashFactory: NoSplash.splashFactory),
                         child: IconButton(
-                          icon: const Icon(Icons.create_new_folder, color: Colors.black87),
+                          icon: const Icon(Icons.create_new_folder,
+                              color: Colors.black87),
                           onPressed: () async {
                             _addNewFolder();
                           },
@@ -122,11 +125,13 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   }
 
   void loadFolders() async {
-    Map<int, String> data = await GeneralDatabase.instance.readAllFolders(GeneralDatabase.tableMedicationFolders);
+    Map<int, String> data = await GeneralDatabase.instance
+        .readAllFolders(GeneralDatabase.tableMedicationFolders);
 
     if (data.isEmpty) {
       data = {
-        await GeneralDatabase.instance.createFolder('My Medications', GeneralDatabase.tableMedicationFolders):
+        await GeneralDatabase.instance.createFolder(
+                'My Medications', GeneralDatabase.tableMedicationFolders):
             'My Medications'
       };
     }
@@ -135,7 +140,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     });
   }
 
-  void _showAddMedicationPlanSheet(BuildContext context, MedicationPlan? existingPlan) async {
+  void _showAddMedicationPlanSheet(
+      BuildContext context, MedicationPlan? existingPlan) async {
     MedicationPlan? medicationPlan = await showModalBottomSheet<MedicationPlan>(
       context: context,
       isScrollControlled: true,
@@ -161,16 +167,22 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                   IconButton(
                     icon: const Icon(Icons.check),
                     onPressed: () {
-                      MedicationBottomSheetWidgetState? state = medicationBottomSheetKey.currentState;
+                      MedicationBottomSheetWidgetState? state =
+                          medicationBottomSheetKey.currentState;
 
                       if (state != null) {
-                        if (medicationBottomSheetKey.currentState!.planName.isEmpty) {
-                          _showErrorDialog(context, 'Medication plan name cannot be empty');
+                        if (medicationBottomSheetKey
+                            .currentState!.planName.isEmpty) {
+                          _showErrorDialog(
+                              context, 'Medication plan name cannot be empty');
                           return;
                         }
 
-                        if (medicationBottomSheetKey.currentState!.selectedFolder == 'Select a folder') {
-                          _showErrorDialog(context, 'Medication plan folder cannot be empty');
+                        if (medicationBottomSheetKey
+                                .currentState!.selectedFolder ==
+                            'Select a folder') {
+                          _showErrorDialog(context,
+                              'Medication plan folder cannot be empty');
                           return;
                         }
 
@@ -180,18 +192,22 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                                 state.planStartDate.month == now.month &&
                                 state.planStartDate.day == now.day) ||
                             state.planStartDate.isBefore(now)) {
-                          _showErrorDialog(context, 'A medication plan can start earliest from the next day onwards.');
+                          _showErrorDialog(context,
+                              'A medication plan can start earliest from the next day onwards.');
                           return;
                         }
 
-                        List<MedicationComponentPlan> componentPlans = state.componentPlans;
+                        List<MedicationComponentPlan> componentPlans =
+                            state.componentPlans;
                         if (componentPlans.isNotEmpty) {
                           MedicationPlan medicationPlan = MedicationPlan(
                             id: state.planId,
                             name: state.planName,
                             folder: state.selectedFolder,
-                            startDateString: state.planStartDate.toIso8601String(),
-                            lastRefreshedDateString: state.planLastRefreshedDateString ?? '',
+                            startDateString:
+                                state.planStartDate.toIso8601String(),
+                            lastRefreshedDateString:
+                                state.planLastRefreshedDateString ?? '',
                             active: true,
                             medicationComponentPlans: componentPlans,
                             description: '',
@@ -235,10 +251,12 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             decoration: const InputDecoration(
               hintText: "Enter folder name",
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 172, 172, 172)),
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 172, 172, 172)),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Color.fromARGB(255, 114, 114, 114)),
+                borderSide:
+                    BorderSide(color: Color.fromARGB(255, 114, 114, 114)),
               ),
             ),
           ),
@@ -261,8 +279,9 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
               onPressed: () async {
                 if (_folderNameController.text.isNotEmpty) {
                   Navigator.of(context).pop();
-                  int i = await GeneralDatabase.instance
-                      .createFolder(_folderNameController.text, GeneralDatabase.tableMedicationFolders);
+                  int i = await GeneralDatabase.instance.createFolder(
+                      _folderNameController.text,
+                      GeneralDatabase.tableMedicationFolders);
                   setState(() {
                     if (i != 0) {
                       folders[i] = _folderNameController.text;
@@ -282,7 +301,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     return folders.entries.toList().map((entry) {
       String folder = entry.value;
       int folderId = entry.key;
-      List<MedicationPlan> filteredPlans = plans.where((plan) => plan.folder == folder).toList();
+      List<MedicationPlan> filteredPlans =
+          plans.where((plan) => plan.folder == folder).toList();
 
       return Theme(
         data: ThemeData(dividerColor: Colors.black26),
@@ -336,25 +356,33 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          child: Text(plan.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          child: Text(plan.name,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
                         ),
                         _buildPlanPopupMenuButton(plan, index),
                       ],
                     ),
                     Text(plan.active ? 'Active' : 'Inactive',
                         style: TextStyle(
-                            fontSize: 14, color: plan.active ? const Color.fromARGB(255, 112, 186, 115) : Colors.grey)),
+                            fontSize: 14,
+                            color: plan.active
+                                ? const Color.fromARGB(255, 112, 186, 115)
+                                : Colors.grey)),
                     Expanded(
                       child: ListView.builder(
-                        itemCount:
-                            plan.medicationComponentPlans.length > 3 ? 3 + 1 : plan.medicationComponentPlans.length,
+                        itemCount: plan.medicationComponentPlans.length > 3
+                            ? 3 + 1
+                            : plan.medicationComponentPlans.length,
                         itemBuilder: (context, componentIndex) {
                           debugPrint("In Block Function");
                           plan.printFieldTypes();
                           if (componentIndex >= 3) {
-                            return const Text("...", style: TextStyle(fontSize: 14));
+                            return const Text("...",
+                                style: TextStyle(fontSize: 14));
                           }
-                          MedicationComponentPlan componentPlan = plan.medicationComponentPlans[componentIndex];
+                          MedicationComponentPlan componentPlan =
+                              plan.medicationComponentPlans[componentIndex];
                           return Row(
                             children: [
                               Expanded(
@@ -389,10 +417,12 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             value: 1,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(plan.active ? 'Set plan to inactive' : 'Set plan to active'),
+              child: Text(
+                  plan.active ? 'Set plan to inactive' : 'Set plan to active'),
             ),
             onTap: () async {
-              await MedicationDatabaseHelper.instance.updateMedicationPlan(plan);
+              await MedicationDatabaseHelper.instance
+                  .updateMedicationPlan(plan);
               setState(() {
                 plan.active = !plan.active;
               });
@@ -410,7 +440,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: const Text('Delete Plan'),
-                    content: const Text('Are you sure you want to delete this plan?'),
+                    content: const Text(
+                        'Are you sure you want to delete this plan?'),
                     actions: <Widget>[
                       _buildDialogButton(
                         text: 'Cancel',
@@ -420,7 +451,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
                         text: 'Delete',
                         onPressed: () async {
                           await cancelExistingNotifications(plan.id!);
-                          await MedicationDatabaseHelper.instance.deleteMedicationPlan(plan);
+                          await MedicationDatabaseHelper.instance
+                              .deleteMedicationPlan(plan);
                           setState(() {
                             Navigator.pop(context);
                             plans.removeAt(index);
@@ -493,7 +525,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             ),
             _buildDialogButton(
               text: 'Save',
-              onPressed: () => _handleRenameSave(renameController.text, folderId),
+              onPressed: () =>
+                  _handleRenameSave(renameController.text, folderId),
             ),
           ],
         );
@@ -509,7 +542,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
     Navigator.of(context).pop();
 
-    int i = await GeneralDatabase.instance.updateFolder(folderId, newName, GeneralDatabase.tableMedicationFolders);
+    int i = await GeneralDatabase.instance.updateFolder(
+        folderId, newName, GeneralDatabase.tableMedicationFolders);
     if (i != 0) {
       List<MedicationPlan> updatedPlans = [];
       for (var plan in plans) {
@@ -551,7 +585,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
 
   void _handleDelete(int folderId) async {
     Navigator.of(context).pop();
-    int deletionCount = await GeneralDatabase.instance.deleteFolder(folderId, GeneralDatabase.tableMedicationFolders);
+    int deletionCount = await GeneralDatabase.instance
+        .deleteFolder(folderId, GeneralDatabase.tableMedicationFolders);
     if (deletionCount != 0) {
       List<MedicationPlan> remainingPlans = [];
 
@@ -589,7 +624,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     );
   }
 
-  Widget _buildDialogButton({required String text, required void Function()? onPressed}) {
+  Widget _buildDialogButton(
+      {required String text, required void Function()? onPressed}) {
     return TextButton(
       onPressed: onPressed,
       child: Text(text),
@@ -610,21 +646,25 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     if (medicationPlan == null) return;
 
     await _checkAndRequestNotificationPermission();
-    String localTimeZone = await AwesomeNotifications().getLocalTimeZoneIdentifier();
+    String localTimeZone =
+        await AwesomeNotifications().getLocalTimeZoneIdentifier();
     await _insertOrUpdateMedicationPlan(medicationPlan);
 
     DateTime now = DateTime.now();
     DateTime startDate = DateTime.parse(medicationPlan.startDateString);
 
-    for (MedicationComponentPlan componentPlan in medicationPlan.medicationComponentPlans) {
+    for (MedicationComponentPlan componentPlan
+        in medicationPlan.medicationComponentPlans) {
       if (componentPlan.notificationsEnabled) {
         TimeOfDay timeOfDay = _convertStringToTimeOfDay(componentPlan.time);
-        await _scheduleNotificationsForComponentPlan(componentPlan, now, startDate, timeOfDay, localTimeZone);
+        await _scheduleNotificationsForComponentPlan(
+            componentPlan, now, startDate, timeOfDay, localTimeZone);
       }
     }
 
     medicationPlan.lastRefreshedDateString = DateTime.now().toIso8601String();
-    await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
+    await MedicationDatabaseHelper.instance
+        .updateMedicationPlan(medicationPlan);
     _updatePlansList(medicationPlan);
   }
 
@@ -635,40 +675,52 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
     }
   }
 
-  Future<void> _insertOrUpdateMedicationPlan(MedicationPlan medicationPlan) async {
+  Future<void> _insertOrUpdateMedicationPlan(
+      MedicationPlan medicationPlan) async {
     if (medicationPlan.id == null) {
-      int planId = await MedicationDatabaseHelper.instance.insertMedicationPlan(medicationPlan);
+      int planId = await MedicationDatabaseHelper.instance
+          .insertMedicationPlan(medicationPlan);
       medicationPlan.id = planId;
-      await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
+      await MedicationDatabaseHelper.instance
+          .updateMedicationPlan(medicationPlan);
     } else {
-      await MedicationDatabaseHelper.instance.updateMedicationPlan(medicationPlan);
+      await MedicationDatabaseHelper.instance
+          .updateMedicationPlan(medicationPlan);
       await cancelExistingNotifications(medicationPlan.id!);
     }
   }
 
-  Future<void> _scheduleNotificationsForComponentPlan(MedicationComponentPlan componentPlan, DateTime now,
-      DateTime startDate, TimeOfDay timeOfDay, String localTimeZone) async {
+  Future<void> _scheduleNotificationsForComponentPlan(
+      MedicationComponentPlan componentPlan,
+      DateTime now,
+      DateTime startDate,
+      TimeOfDay timeOfDay,
+      String localTimeZone) async {
     if (componentPlan.frequency != 0) {
       int numberOfNotifictionsToAdd = 0;
       if (componentPlan.notificationIdsToDates.isNotEmpty) {
-        for (MapEntry<int, String> entry in componentPlan.notificationIdsToDates.entries) {
+        for (MapEntry<int, String> entry
+            in componentPlan.notificationIdsToDates.entries) {
           DateTime notificationDate = DateTime.parse(entry.value);
           if (notificationDate.isAfter(now)) {
             startDate = notificationDate;
             break;
           } else {
             componentPlan.notificationIdsToDates.remove(entry.key);
-            await MedicationDatabaseHelper.instance.deleteNotificationIds([entry.key]);
+            await MedicationDatabaseHelper.instance
+                .deleteNotificationIds([entry.key]);
             numberOfNotifictionsToAdd++;
           }
         }
       } else {
         numberOfNotifictionsToAdd = 7;
       }
-      List<int> notificationIds = await MedicationDatabaseHelper.instance.getNotificationIds(numberOfNotifictionsToAdd);
+      List<int> notificationIds = await MedicationDatabaseHelper.instance
+          .getNotificationIds(numberOfNotifictionsToAdd);
 
       for (int i = 1; i <= numberOfNotifictionsToAdd; i++) {
-        componentPlan.notificationIdsToDates[notificationIds[i - 1]] = startDate.toIso8601String();
+        componentPlan.notificationIdsToDates[notificationIds[i - 1]] =
+            startDate.toIso8601String();
         await AwesomeNotifications().createNotification(
           content: NotificationContent(
             id: notificationIds[i - 1],
@@ -677,7 +729,9 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             title: 'Medication reminder',
             body: 'You have a medication to take!',
             category: NotificationCategory.Reminder,
-            payload: {'medication_component_plan': componentPlan.toMap().toString()},
+            payload: {
+              'medication_component_plan': componentPlan.toMap().toString()
+            },
           ),
           schedule: NotificationCalendar(
             allowWhileIdle: true,
@@ -691,17 +745,18 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             timeZone: localTimeZone,
           ),
         );
-        startDate = startDate.add(Duration(days: i * componentPlan.frequency.toInt()));
+        startDate =
+            startDate.add(Duration(days: i * componentPlan.frequency.toInt()));
       }
     } else {
       if (componentPlan.notificationIdsToDates.isNotEmpty) {
-        await MedicationDatabaseHelper.instance
-            .deleteNotificationIds(componentPlan.notificationIdsToDates.keys.toList());
+        await MedicationDatabaseHelper.instance.deleteNotificationIds(
+            componentPlan.notificationIdsToDates.keys.toList());
       }
 
       componentPlan.notificationIdsToDates = {};
-      List<int> notificationIds =
-          await MedicationDatabaseHelper.instance.getNotificationIds(componentPlan.intakeDays.length);
+      List<int> notificationIds = await MedicationDatabaseHelper.instance
+          .getNotificationIds(componentPlan.intakeDays.length);
 
       Map<String, int> daysToInts = {
         'Monday': DateTime.monday,
@@ -714,7 +769,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
       };
 
       for (int i = 0; i < componentPlan.intakeDays.length; i++) {
-        componentPlan.notificationIdsToDates[notificationIds[i]] = startDate.toIso8601String();
+        componentPlan.notificationIdsToDates[notificationIds[i]] =
+            startDate.toIso8601String();
         await AwesomeNotifications().createNotification(
           content: NotificationContent(
             id: notificationIds[i],
@@ -724,7 +780,9 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
             body: null,
             category: NotificationCategory.Reminder,
             showWhen: true,
-            payload: {'medication_component_plan': componentPlan.toMap().toString()},
+            payload: {
+              'medication_component_plan': componentPlan.toMap().toString()
+            },
           ),
           schedule: NotificationCalendar(
             allowWhileIdle: true,
@@ -743,7 +801,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   void _updatePlansList(MedicationPlan medicationPlan) {
     setState(() {
       if (plans.any((element) => element.id == medicationPlan.id)) {
-        plans[plans.indexWhere((element) => element.id == medicationPlan.id)] = medicationPlan;
+        plans[plans.indexWhere((element) => element.id == medicationPlan.id)] =
+            medicationPlan;
       } else {
         plans.add(medicationPlan);
       }
@@ -751,9 +810,11 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   }
 
   Future<void> cancelExistingNotifications(int planId) async {
-    MedicationPlan? medicationPlan = await MedicationDatabaseHelper.instance.getMedicationPlan(planId);
+    MedicationPlan? medicationPlan =
+        await MedicationDatabaseHelper.instance.getMedicationPlan(planId);
 
-    List<MedicationComponentPlan> components = medicationPlan?.medicationComponentPlans ?? [];
+    List<MedicationComponentPlan> components =
+        medicationPlan?.medicationComponentPlans ?? [];
     for (MedicationComponentPlan component in components) {
       for (int notificationId in component.notificationIdsToDates.keys) {
         await AwesomeNotifications().cancel(notificationId);
@@ -762,7 +823,8 @@ class _UserMedicationPageState extends State<UserMedicationPage> {
   }
 
   void refreshReminders() async {
-    List<MedicationPlan> allPlans = await MedicationDatabaseHelper.instance.getAllMedicationPlans();
+    List<MedicationPlan> allPlans =
+        await MedicationDatabaseHelper.instance.getAllMedicationPlans();
 
     for (MedicationPlan plan in allPlans) {
       if (plan.active) {
