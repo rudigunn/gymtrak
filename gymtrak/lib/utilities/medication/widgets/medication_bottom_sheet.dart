@@ -238,6 +238,7 @@ class MedicationBottomSheetWidgetState extends State<MedicationBottomSheetWidget
 
   void _showComponentInput(
       BuildContext context, MedicationComponent component, MedicationComponentPlan? medicationComponentPlan) async {
+    debugPrint(medicationComponentPlan?.toMap().toString() ?? 'No plan found');
     MedicationComponentPlan? componentPlan = await showModalBottomSheet<MedicationComponentPlan>(
       context: context,
       isScrollControlled: true,

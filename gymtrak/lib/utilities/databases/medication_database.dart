@@ -6,19 +6,19 @@ import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_component_plan_entry.dart';
 
 class MedicationDatabaseHelper {
   static const _databaseName = "MedicationDatabase.db";
   static const _databaseVersion = 1;
-  static const tableMedicationEntries = 'medication_entries';
+  static const tableMedicationComponentPlanEntries = 'medication_entries';
   static const tableMedicationPlans = 'medication_plans';
   static const tableMedicationComponents = 'medication_components';
   static const tableNotificationIds = 'notification_ids';
 
   // Singleton class setup
   MedicationDatabaseHelper._privateConstructor();
-  static final MedicationDatabaseHelper instance =
-      MedicationDatabaseHelper._privateConstructor();
+  static final MedicationDatabaseHelper instance = MedicationDatabaseHelper._privateConstructor();
 
   // Single database reference
   static Database? _database;
@@ -78,17 +78,14 @@ class MedicationDatabaseHelper {
   }
 
   Future<int> deleteMedicationPlan(MedicationPlan medicationPlan) async {
-    for (MedicationComponentPlan componentPlan
-        in medicationPlan.medicationComponentPlans) {
+    for (MedicationComponentPlan componentPlan in medicationPlan.medicationComponentPlans) {
       if (componentPlan.notificationIdsToDates.isNotEmpty) {
-        await deleteNotificationIds(
-            componentPlan.notificationIdsToDates.keys.toList());
+        await deleteNotificationIds(componentPlan.notificationIdsToDates.keys.toList());
       }
     }
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationPlans);
-    return await store.delete(db,
-        finder: Finder(filter: Filter.byKey(medicationPlan.id)));
+    return await store.delete(db, finder: Finder(filter: Filter.byKey(medicationPlan.id)));
   }
 
   Future<int> deleteMedicationPlanWithId(int id) async {
@@ -143,9 +140,7 @@ class MedicationDatabaseHelper {
       }
 
       // Save the updated list back to the database
-      await store
-          .record('notificationIds')
-          .update(db, {'ids': mutableExistingIds});
+      await store.record('notificationIds').update(db, {'ids': mutableExistingIds});
     }
 
     return newIds;
@@ -168,13 +163,10 @@ class MedicationDatabaseHelper {
     mutableExistingIds.removeWhere((id) => notificationIds.contains(id));
 
     // Save the updated list back to the database
-    await store
-        .record('notificationIds')
-        .update(db, {'ids': mutableExistingIds});
+    await store.record('notificationIds').update(db, {'ids': mutableExistingIds});
   }
 
-  Future<int> insertMedicationComponent(
-      MedicationComponent medicationComponent) async {
+  Future<int> insertMedicationComponent(MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
     return await store.add(db, medicationComponent.toMap());
@@ -194,20 +186,17 @@ class MedicationDatabaseHelper {
     return MedicationComponent.fromMap(recordValue);
   }
 
-  Future<int> updateMedicationComponent(
-      MedicationComponent medicationComponent) async {
+  Future<int> updateMedicationComponent(MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
     return await store.update(db, medicationComponent.toMap(),
         finder: Finder(filter: Filter.byKey(medicationComponent.id)));
   }
 
-  Future<int> deleteMedicationComponent(
-      MedicationComponent medicationComponent) async {
+  Future<int> deleteMedicationComponent(MedicationComponent medicationComponent) async {
     Database db = await instance.database;
     var store = intMapStoreFactory.store(tableMedicationComponents);
-    return await store.delete(db,
-        finder: Finder(filter: Filter.byKey(medicationComponent.id)));
+    return await store.delete(db, finder: Finder(filter: Filter.byKey(medicationComponent.id)));
   }
 
   Future<int> deleteMedicationComponentWithId(int id) async {
@@ -224,6 +213,33 @@ class MedicationDatabaseHelper {
       MedicationComponent component = MedicationComponent.fromMap(e.value);
       component.id = e.key;
       return component;
+    }).toList();
+  }
+
+  Future<int> insertMedicationComponentPlanEntry(MedicationComponentPlanEntry medicationComponentPlanEntry) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponentPlanEntries);
+    return await store.add(db, medicationComponentPlanEntry.toMap());
+  }
+
+  Future<int> deleteMedicationComponentPlanEntry(MedicationComponentPlanEntry medicationComponentPlanEntry) async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponentPlanEntries);
+    return await store.delete(db,
+        finder: Finder(
+            filter: Filter.and([
+          Filter.equals('intakeDate', medicationComponentPlanEntry.intakeDate.toIso8601String()),
+          Filter.equals('medicationComponentPlan', medicationComponentPlanEntry.medicationComponentPlan.toMap())
+        ])));
+  }
+
+  Future<List<MedicationComponentPlanEntry>> getAllMedicationComponentPlanEntries() async {
+    Database db = await instance.database;
+    var store = intMapStoreFactory.store(tableMedicationComponentPlanEntries);
+    var results = await store.find(db);
+    return results.map((e) {
+      MedicationComponentPlanEntry entry = MedicationComponentPlanEntry.fromMap(e.value);
+      return entry;
     }).toList();
   }
 }

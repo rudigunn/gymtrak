@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:gymtrak/utilities/databases/medication_database.dart';
 import 'package:gymtrak/utilities/medication/dataclasses/medication_component_plan.dart';
+import 'package:gymtrak/utilities/medication/dataclasses/medication_component_plan_entry.dart';
 import 'package:gymtrak/utilities/medication/dataclasses/medication_plan.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -32,7 +35,7 @@ class _UserCalendarPageState extends State<UserCalendarPage> {
               firstDayOfWeek: 1,
               showNavigationArrow: true,
               dataSource: snapshot.data,
-              onTap: onTapOnCalender,
+              onTap: onTapOnCalendar,
             );
           } else {
             return const Center();
@@ -57,12 +60,12 @@ class _UserCalendarPageState extends State<UserCalendarPage> {
             appointments.add(Appointment(
               startTime: startTime,
               endTime: startTime.add(const Duration(minutes: 60)),
-              subject: 'Meeting',
+              subject: medicationPlan.name,
               color: Colors.blue,
               startTimeZone: '',
               endTimeZone: '',
               recurrenceRule: 'FREQ=DAILY;INTERVAL=${medicationComponentPlan.frequency.toInt().toString()}',
-              notes: "",
+              notes: jsonEncode(medicationComponentPlan.toMap()),
             ));
           } else {
             String abbreviatedWeekdaysString = medicationComponentPlan.intakeDays
@@ -75,12 +78,12 @@ class _UserCalendarPageState extends State<UserCalendarPage> {
             appointments.add(Appointment(
               startTime: startTime,
               endTime: startTime.add(const Duration(minutes: 60)),
-              subject: 'Meeting',
+              subject: medicationPlan.name,
               color: Colors.blueGrey,
               startTimeZone: '',
               endTimeZone: '',
               recurrenceRule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=$abbreviatedWeekdaysString',
-              notes: "",
+              notes: jsonEncode(medicationComponentPlan.toMap()),
             ));
           }
         }
@@ -96,59 +99,67 @@ class _UserCalendarPageState extends State<UserCalendarPage> {
     return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
   }
 
-  void onTapOnCalender(CalendarTapDetails calendarTapDetails) {
+  void onTapOnCalendar(CalendarTapDetails calendarTapDetails) {
     if (calendarTapDetails.targetElement == CalendarElement.appointment ||
         calendarTapDetails.targetElement == CalendarElement.agenda) {
       final Appointment appointmentDetails = calendarTapDetails.appointments![0];
       String subjectText = appointmentDetails.subject;
-      String dateText = DateFormat('MMMM dd, yyyy').format(appointmentDetails.startTime).toString();
+      String dateText = DateFormat('hh:mm a MMMM dd, yyyy').format(appointmentDetails.startTime).toString();
       String startTimeText = DateFormat('hh:mm a').format(appointmentDetails.startTime).toString();
-      String endTimeText = DateFormat('hh:mm a').format(appointmentDetails.endTime).toString();
-      String timeDetails;
-      if (appointmentDetails.isAllDay) {
-        timeDetails = 'All day';
-      } else {
-        timeDetails = '$startTimeText - $endTimeText';
-      }
+
+      // Decode the MedicationComponentPlan from appointment.notes
+      Map<String, dynamic> notesMap = jsonDecode(appointmentDetails.notes!);
+      MedicationComponentPlan medicationPlan = MedicationComponentPlan.fromMap(notesMap);
+      // Include the starting time and type of the medication
+      String medicationDetails = "Component: ${medicationPlan.medicationComponent.name}\n"
+          "Dosage: ${medicationPlan.dosage}${medicationPlan.medicationComponent.unit}\n"
+          "Type: ${medicationPlan.type}\n";
+
+      // Display Dialog with Medication Details and Action Buttons
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text(subjectText),
               content: SizedBox(
-                height: 80,
+                height: 160,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          dateText,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      dateText,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 20,
+                      ),
                     ),
-                    const Row(
-                      children: <Widget>[
-                        Text(''),
-                      ],
+                    const SizedBox(height: 8),
+                    Text(
+                      medicationDetails,
+                      style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 17),
                     ),
-                    Row(
-                      children: <Widget>[
-                        Text(timeDetails!, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 15)),
-                      ],
-                    )
                   ],
                 ),
               ),
               actions: <Widget>[
                 ElevatedButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await MedicationDatabaseHelper.instance.insertMedicationComponentPlanEntry(
+                          MedicationComponentPlanEntry(
+                              intakeDate: appointmentDetails.startTime, medicationComponentPlan: medicationPlan));
+                      List<MedicationComponentPlanEntry> list =
+                          await MedicationDatabaseHelper.instance.getAllMedicationComponentPlanEntries();
+                      for (MedicationComponentPlanEntry entry in list) {
+                        debugPrint(entry.toMap().toString());
+                      }
+                    },
+                    child: const Text('Took Medication')),
+                ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: const Text('close'))
+                    child: const Text('Did Not Take')),
               ],
             );
           });

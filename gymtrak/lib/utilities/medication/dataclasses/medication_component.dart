@@ -17,6 +17,7 @@ class MedicationComponent {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'name': name,
       'fullName': fullName,
       'category': category,
@@ -27,6 +28,7 @@ class MedicationComponent {
 
   factory MedicationComponent.fromMap(Map<String, dynamic> map) {
     return MedicationComponent(
+      id: map['id'],
       name: map['name'],
       fullName: map['fullName'],
       category: map['category'],
