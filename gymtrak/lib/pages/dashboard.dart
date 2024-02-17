@@ -30,7 +30,7 @@ class UserDashboardPage extends StatelessWidget {
                   foregroundColor: Colors.white,
                   minimumSize: const Size(100, 45),
                   splashFactory: NoSplash.splashFactory),
-              onPressed: () {},
+              onPressed: _showDataSourceSelectionDialog(context),
               icon: const Icon(
                 Symbols.add,
                 color: Colors.white,
@@ -232,6 +232,8 @@ class UserDashboardPage extends StatelessWidget {
       ),
     );
   }
+
+  _showDataSourceSelectionDialog(BuildContext context) {}
 }
 
 class CardWidget extends StatelessWidget {
