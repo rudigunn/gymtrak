@@ -26,6 +26,7 @@ dependencies:
   awesome_notifications: any
   shared_preferences: 2.0.15
   syncfusion_flutter_calendar: ^24.2.5+1
+  syncfusion_flutter_charts: ^24.2.6
 
 dev_dependencies:
   flutter_test:

@@ -3,10 +3,19 @@ import 'package:graphic/graphic.dart';
 import 'package:flutter/gestures.dart';
 import 'package:gymtrak/data.dart';
 import 'package:gymtrak/utilities/charts/charts.dart';
+import 'package:gymtrak/utilities/dashboard/widgets/chart_configuration_widget.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class UserDashboardPage extends StatelessWidget {
+class UserDashboardPage extends StatefulWidget {
   const UserDashboardPage({super.key});
+
+  @override
+  UserDashBoardPageState createState() => UserDashBoardPageState();
+}
+
+class UserDashBoardPageState extends State<UserDashboardPage> {
+  final GlobalKey<ChartConfigurationWidgetState> chartConfigurationSheetKey =
+      GlobalKey<ChartConfigurationWidgetState>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +39,7 @@ class UserDashboardPage extends StatelessWidget {
                   foregroundColor: Colors.white,
                   minimumSize: const Size(100, 45),
                   splashFactory: NoSplash.splashFactory),
-              onPressed: _showDataSourceSelectionDialog(context),
+              onPressed: () async => await _showDataSourceSelectionSheet(context),
               icon: const Icon(
                 Symbols.add,
                 color: Colors.white,
@@ -45,31 +54,27 @@ class UserDashboardPage extends StatelessWidget {
         itemBuilder: (context, index) {
           if (index == 0) {
             return Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
                 child: CardWidget(
                   chartConfig: ChartConfiguration(
                     data: complexGroupData,
                     variables: {
                       'date': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map =
-                              data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
                           return map['date']?.toString() ?? '';
                         },
                         scale: OrdinalScale(tickCount: 0, inflate: true),
                       ),
                       'points': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map =
-                              data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
                           return map['points'] as num;
                         },
                       ),
                       'name': Variable(
                         accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map =
-                              data as Map<dynamic, dynamic>;
+                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
                           return map['name']?.toString() ?? '';
                         },
                       ),
@@ -77,20 +82,15 @@ class UserDashboardPage extends StatelessWidget {
                     coord: RectCoord(horizontalRange: [0.01, 0.99]),
                     marks: [
                       LineMark(
-                        position:
-                            Varset('date') * Varset('points') / Varset('name'),
+                        position: Varset('date') * Varset('points') / Varset('name'),
                         shape: ShapeEncode(value: BasicLineShape(smooth: true)),
                         size: SizeEncode(value: 0.5),
                         color: ColorEncode(
                           variable: 'name',
                           values: Defaults.colors10,
                           updaters: {
-                            'groupMouse': {
-                              false: (color) => color.withAlpha(100)
-                            },
-                            'groupTouch': {
-                              false: (color) => color.withAlpha(100)
-                            },
+                            'groupMouse': {false: (color) => color.withAlpha(100)},
+                            'groupTouch': {false: (color) => color.withAlpha(100)},
                           },
                         ),
                       ),
@@ -99,12 +99,8 @@ class UserDashboardPage extends StatelessWidget {
                           variable: 'name',
                           values: Defaults.colors10,
                           updaters: {
-                            'groupMouse': {
-                              false: (color) => color.withAlpha(100)
-                            },
-                            'groupTouch': {
-                              false: (color) => color.withAlpha(100)
-                            },
+                            'groupMouse': {false: (color) => color.withAlpha(100)},
+                            'groupTouch': {false: (color) => color.withAlpha(100)},
                           },
                         ),
                       ),
@@ -125,19 +121,11 @@ class UserDashboardPage extends StatelessWidget {
                           },
                           variable: 'name',
                           devices: {PointerDeviceKind.mouse}),
-                      'tooltipTouch': PointSelection(on: {
-                        GestureType.scaleUpdate,
-                        GestureType.tapDown,
-                        GestureType.longPressMoveUpdate
-                      }, devices: {
-                        PointerDeviceKind.touch
-                      }),
+                      'tooltipTouch': PointSelection(
+                          on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
+                          devices: {PointerDeviceKind.touch}),
                       'groupTouch': PointSelection(
-                          on: {
-                            GestureType.scaleUpdate,
-                            GestureType.tapDown,
-                            GestureType.longPressMoveUpdate
-                          },
+                          on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
                           variable: 'name',
                           devices: {PointerDeviceKind.touch}),
                     },
@@ -162,70 +150,6 @@ class UserDashboardPage extends StatelessWidget {
                     ),
                   ),
                 ));
-          } else if (index == 1) {
-            return Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 16.0),
-                child: CardWidget(
-                  chartConfig: ChartConfiguration(
-                    data: adjustData,
-                    variables: {
-                      'index': Variable(
-                        accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map =
-                              data as Map<dynamic, dynamic>;
-                          return map['index'].toString();
-                        },
-                      ),
-                      'type': Variable(
-                        accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map =
-                              data as Map<dynamic, dynamic>;
-                          return map['type'] as String;
-                        },
-                      ),
-                      'value': Variable(
-                        accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map =
-                              data as Map<dynamic, dynamic>;
-                          return map['value'] as num;
-                        },
-                      ),
-                    },
-                    coord: PolarCoord(),
-                    marks: [
-                      LineMark(
-                        position:
-                            Varset('index') * Varset('value') / Varset('type'),
-                        shape: ShapeEncode(value: BasicLineShape(loop: true)),
-                        color: ColorEncode(
-                            variable: 'type', values: Defaults.colors10),
-                      )
-                    ],
-                    axes: [
-                      Defaults.circularAxis,
-                      Defaults.radialAxis,
-                    ],
-                    selections: {
-                      'touchMove': PointSelection(
-                        on: {
-                          GestureType.scaleUpdate,
-                          GestureType.tapDown,
-                          GestureType.longPressMoveUpdate
-                        },
-                        dim: Dim.x,
-                        variable: 'index',
-                      )
-                    },
-                    tooltip: TooltipGuide(
-                      anchor: (_) => Offset.zero,
-                      align: Alignment.bottomRight,
-                      multiTuples: true,
-                      variables: ['type', 'value'],
-                    ),
-                    crosshair: CrosshairGuide(followPointer: [false, true]),
-                  ),
-                ));
           }
           return null;
         },
@@ -233,7 +157,46 @@ class UserDashboardPage extends StatelessWidget {
     );
   }
 
-  _showDataSourceSelectionDialog(BuildContext context) {}
+  _showDataSourceSelectionSheet(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.88,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+            child: Scaffold(
+              appBar: AppBar(
+                title: Center(
+                  child: Container(
+                    width: 100,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 10),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 190, 190, 190),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                actions: [
+                  IconButton(
+                      icon: const Icon(Icons.check),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        // Logic to save the chart
+                      }),
+                ],
+              ),
+              body: ChartConfigurationWidget(
+                key: chartConfigurationSheetKey,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class CardWidget extends StatelessWidget {
@@ -259,8 +222,7 @@ class CardWidget extends StatelessWidget {
                 title: Text('Card Title'),
                 subtitle: Text('Subtitle'),
               ),
-              LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
+              LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                 return SizedBox(
                   height: 150,
                   child: Container(
