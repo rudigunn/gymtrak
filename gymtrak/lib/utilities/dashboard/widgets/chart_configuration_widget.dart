@@ -10,7 +10,8 @@ class ChartConfigurationWidget extends StatefulWidget {
   const ChartConfigurationWidget({super.key});
 
   @override
-  ChartConfigurationWidgetState createState() => ChartConfigurationWidgetState();
+  ChartConfigurationWidgetState createState() =>
+      ChartConfigurationWidgetState();
 }
 
 class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
@@ -74,7 +75,8 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("FROM", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text("FROM",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(width: 60),
           Expanded(
             child: DropdownButton<String>(
@@ -95,8 +97,8 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
               onChanged: (String? value) {
                 setState(() {
                   queries[idx].selectedDataSource = value;
+                  fetchDataAndTransform();
                 });
-                fetchDataAndTransform();
               },
               underline: Container(),
               style: const TextStyle(color: Colors.black),
@@ -115,7 +117,8 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("WHAT", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text("WHAT",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(width: 60),
           Expanded(
             child: DropdownButton<String>(
@@ -131,7 +134,8 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
                           ))
                       .toList()
                   : medicationOptions
-                      .map((entry) => entry.medicationComponentPlan.medicationComponent.name)
+                      .map((entry) => entry
+                          .medicationComponentPlan.medicationComponent.name)
                       .toSet()
                       .toList()
                       .map((name) => DropdownMenuItem<String>(
@@ -139,8 +143,9 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
                             child: Text(name),
                           ))
                       .toList(),
-              hint:
-                  queries[idx].selectedEntry == null ? const Text('Select a entry') : Text(queries[idx].selectedEntry!),
+              hint: queries[idx].selectedEntry == null
+                  ? const Text('Select a entry')
+                  : Text(queries[idx].selectedEntry!),
               onChanged: (String? value) {
                 setState(() {
                   queries[idx].selectedEntry = value;
@@ -163,7 +168,8 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("MAPPING", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          const Text("MAPPING",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(width: 60),
           Expanded(
             child: DropdownButton<String>(
@@ -194,7 +200,6 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
   }
 
   Widget _buildChartPreview() {
-    // Example List<LineSeries<dynamic, dynamic>> populated based on queries
     List<LineSeries<dynamic, dynamic>> seriesList = queries.map((query) {
       List<_ChartData> data = [];
       if (query.selectedDataSource == null || query.selectedEntry == null) {
@@ -207,8 +212,10 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
       } else if (query.selectedDataSource == 'Bloodwork') {
         List<BloodWorkResult> bloodworkResults = bloodworkOptions;
         List<_ChartData> data = bloodworkResults
-            .where((result) => result.parameterValues.containsKey(query.selectedEntry))
-            .map((result) => _ChartData(result.date, result.parameterValues[query.selectedEntry]!))
+            .where((result) =>
+                result.parameterValues.containsKey(query.selectedEntry))
+            .map((result) => _ChartData(
+                result.date, result.parameterValues[query.selectedEntry]!))
             .toList();
         return LineSeries<_ChartData, DateTime>(
           dataSource: data,
@@ -217,10 +224,14 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
           name: query.selectedEntry ?? 'Series',
         );
       } else if (query.selectedDataSource == 'Medication') {
-        List<MedicationComponentPlanEntry> medicationComponentPlanEntries = medicationOptions;
+        List<MedicationComponentPlanEntry> medicationComponentPlanEntries =
+            medicationOptions;
         List<_ChartData> data = medicationComponentPlanEntries
-            .where((entry) => entry.medicationComponentPlan.medicationComponent.name == query.selectedEntry)
-            .map((entry) => _ChartData(entry.intakeDate, entry.medicationComponentPlan.dosage))
+            .where((entry) =>
+                entry.medicationComponentPlan.medicationComponent.name ==
+                query.selectedEntry)
+            .map((entry) => _ChartData(
+                entry.intakeDate, entry.medicationComponentPlan.dosage))
             .toList();
         return LineSeries<_ChartData, DateTime>(
           dataSource: data,
@@ -253,13 +264,16 @@ class ChartConfigurationWidgetState extends State<ChartConfigurationWidget> {
 
   Future<void> _fetchDataAndTransform() async {
     if (queries.map((e) => e.selectedDataSource).contains('Bloodwork')) {
-      List<BloodWorkResult> bloodworkResults = await BloodWorkDatabaseHelper.instance.getAllBloodWorkResults();
+      List<BloodWorkResult> bloodworkResults =
+          await BloodWorkDatabaseHelper.instance.getAllBloodWorkResults();
       setState(() {
         bloodworkOptions = bloodworkResults;
       });
-    } else if (queries.map((e) => e.selectedDataSource).contains('Medication')) {
+    }
+    if (queries.map((e) => e.selectedDataSource).contains('Medication')) {
       List<MedicationComponentPlanEntry> medicationComponentPlanEntries =
-          await MedicationDatabaseHelper.instance.getAllMedicationComponentPlanEntries();
+          await MedicationDatabaseHelper.instance
+              .getAllMedicationComponentPlanEntries();
       setState(() {
         medicationOptions = medicationComponentPlanEntries;
       });
