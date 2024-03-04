@@ -5,6 +5,7 @@ import 'package:gymtrak/data.dart';
 import 'package:gymtrak/utilities/charts/charts.dart';
 import 'package:gymtrak/utilities/dashboard/widgets/chart_configuration_widget.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class UserDashboardPage extends StatefulWidget {
   const UserDashboardPage({super.key});
@@ -16,6 +17,8 @@ class UserDashboardPage extends StatefulWidget {
 class UserDashBoardPageState extends State<UserDashboardPage> {
   final GlobalKey<ChartConfigurationWidgetState> chartConfigurationSheetKey =
       GlobalKey<ChartConfigurationWidgetState>();
+
+  List<SfCartesianChart> chartConfigurations = [];
 
   @override
   Widget build(BuildContext context) {
@@ -50,108 +53,13 @@ class UserDashBoardPageState extends State<UserDashboardPage> {
         ],
       ),
       body: ListView.builder(
-        itemCount: 5,
+        itemCount: chartConfigurations.length,
         itemBuilder: (context, index) {
-          if (index == 0) {
-            return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                child: CardWidget(
-                  chartConfig: ChartConfiguration(
-                    data: complexGroupData,
-                    variables: {
-                      'date': Variable(
-                        accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
-                          return map['date']?.toString() ?? '';
-                        },
-                        scale: OrdinalScale(tickCount: 0, inflate: true),
-                      ),
-                      'points': Variable(
-                        accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
-                          return map['points'] as num;
-                        },
-                      ),
-                      'name': Variable(
-                        accessor: (dynamic data) {
-                          final Map<dynamic, dynamic> map = data as Map<dynamic, dynamic>;
-                          return map['name']?.toString() ?? '';
-                        },
-                      ),
-                    },
-                    coord: RectCoord(horizontalRange: [0.01, 0.99]),
-                    marks: [
-                      LineMark(
-                        position: Varset('date') * Varset('points') / Varset('name'),
-                        shape: ShapeEncode(value: BasicLineShape(smooth: true)),
-                        size: SizeEncode(value: 0.5),
-                        color: ColorEncode(
-                          variable: 'name',
-                          values: Defaults.colors10,
-                          updaters: {
-                            'groupMouse': {false: (color) => color.withAlpha(100)},
-                            'groupTouch': {false: (color) => color.withAlpha(100)},
-                          },
-                        ),
-                      ),
-                      PointMark(
-                        color: ColorEncode(
-                          variable: 'name',
-                          values: Defaults.colors10,
-                          updaters: {
-                            'groupMouse': {false: (color) => color.withAlpha(100)},
-                            'groupTouch': {false: (color) => color.withAlpha(100)},
-                          },
-                        ),
-                      ),
-                    ],
-                    axes: [
-                      Defaults.horizontalAxis,
-                      Defaults.verticalAxis,
-                    ],
-                    selections: {
-                      'tooltipMouse': PointSelection(on: {
-                        GestureType.hover,
-                      }, devices: {
-                        PointerDeviceKind.mouse
-                      }),
-                      'groupMouse': PointSelection(
-                          on: {
-                            GestureType.hover,
-                          },
-                          variable: 'name',
-                          devices: {PointerDeviceKind.mouse}),
-                      'tooltipTouch': PointSelection(
-                          on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
-                          devices: {PointerDeviceKind.touch}),
-                      'groupTouch': PointSelection(
-                          on: {GestureType.scaleUpdate, GestureType.tapDown, GestureType.longPressMoveUpdate},
-                          variable: 'name',
-                          devices: {PointerDeviceKind.touch}),
-                    },
-                    tooltip: TooltipGuide(
-                      selections: {'tooltipTouch', 'tooltipMouse'},
-                      followPointer: [true, true],
-                      align: Alignment.topLeft,
-                      mark: 0,
-                      variables: [
-                        'date',
-                        'name',
-                        'points',
-                      ],
-                    ),
-                    crosshair: CrosshairGuide(
-                      selections: {'tooltipTouch', 'tooltipMouse'},
-                      styles: [
-                        PaintStyle(strokeColor: const Color(0xffbfbfbf)),
-                        PaintStyle(strokeColor: const Color(0x00bfbfbf)),
-                      ],
-                      followPointer: [true, false],
-                    ),
-                  ),
-                ));
-          }
-          return null;
+          return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              child: CardWidget(
+                chartConfig: chartConfigurations[index],
+              ));
         },
       ),
     );
@@ -183,8 +91,13 @@ class UserDashBoardPageState extends State<UserDashboardPage> {
                   IconButton(
                       icon: const Icon(Icons.check),
                       onPressed: () {
+                        var currentConfig = chartConfigurationSheetKey.currentState?.currentChart;
+                        if (currentConfig != null) {
+                          setState(() {
+                            chartConfigurations.add(currentConfig);
+                          });
+                        }
                         Navigator.pop(context);
-                        // Logic to save the chart
                       }),
                 ],
               ),
@@ -200,7 +113,7 @@ class UserDashBoardPageState extends State<UserDashboardPage> {
 }
 
 class CardWidget extends StatelessWidget {
-  final ChartConfiguration chartConfig;
+  final SfCartesianChart chartConfig;
 
   const CardWidget({
     super.key,
@@ -224,21 +137,8 @@ class CardWidget extends StatelessWidget {
               ),
               LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
                 return SizedBox(
-                  height: 150,
-                  child: Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                    child: Chart(
-                      data: chartConfig.data,
-                      variables: chartConfig.variables,
-                      marks: chartConfig.marks,
-                      axes: chartConfig.axes,
-                      selections: chartConfig.selections,
-                      tooltip: chartConfig.tooltip,
-                      crosshair: chartConfig.crosshair,
-                    ),
-                  ),
+                  height: 250,
+                  child: SizedBox(width: constraints.maxWidth, height: constraints.maxHeight, child: chartConfig),
                 );
               }),
               const Padding(
