@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:graphic/graphic.dart';
-import 'package:flutter/gestures.dart';
-import 'package:gymtrak/data.dart';
-import 'package:gymtrak/utilities/charts/charts.dart';
 import 'package:gymtrak/utilities/dashboard/widgets/chart_configuration_widget.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
