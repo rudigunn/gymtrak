@@ -23,7 +23,7 @@
 
 1. Clone the repository:
    ```sh
-   git clone <your-repo-url>
+   git clone https://github.com/rudigunn/gymtrak.git
    cd gymtrak/gymtrak
    ```
 
